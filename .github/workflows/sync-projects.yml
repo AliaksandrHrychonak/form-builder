@@ -1,0 +1,28 @@
+name: Sync Project Items
+on:
+  projects_v2_item:
+    types: [ created ]
+
+jobs:
+  sync-items:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const title = context.payload.projects_v2_item.title;
+            if (!title.startsWith('[FB-#')) {
+              const issue = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: 'Created from GitHub Projects'
+              });
+            
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.data.number,
+                title: `[FB-#${issue.data.number}]: ${title}`
+              });
+            }
