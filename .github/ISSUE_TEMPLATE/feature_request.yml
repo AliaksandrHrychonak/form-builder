@@ -1,6 +1,6 @@
 name: Project Task
 description: Create a new project task
-title: " "
+title: ""
 labels: [ "project-task" ]
 assignees:
   - G
