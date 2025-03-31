@@ -1,7 +1,9 @@
 name: Sync Project Items
 on:
-  projects_v2_item:
-    types: [ created ]
+  issues:
+    types: [ opened, edited ]
+  projects_v2:
+    types: [ created, edited ]
 
 jobs:
   sync-items:
