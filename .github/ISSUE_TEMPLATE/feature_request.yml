@@ -1,29 +1,24 @@
 name: Project Task
 description: Create a new project task
-title: "[FB-]: "
+title: "[FB- ]:"
 labels: [ "project-task" ]
 assignees:
   - G
 
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Creating a new project task
-
   - type: input
     id: title
     attributes:
       label: Task Title
-      description: Brief description of what needs to be done
+      description: Brief title of the task
     validations:
       required: true
 
   - type: textarea
     id: description
     attributes:
-      label: Detailed Description
-      description: Describe requirements and expected outcome
+      label: What needs to be done
+      description: Functionality description
     validations:
       required: true
 
@@ -37,19 +32,3 @@ body:
         - Low
     validations:
       required: true
-
-  - type: textarea
-    id: acceptance
-    attributes:
-      label: Acceptance Criteria
-      description: How to verify the task is completed correctly?
-    validations:
-      required: true
-
-  - type: textarea
-    id: notes
-    attributes:
-      label: Additional Notes
-      description: Any additional information
-    validations:
-      required: false
