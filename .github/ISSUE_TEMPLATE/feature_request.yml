@@ -1,6 +1,6 @@
 name: Project Task
 description: Create a new project task
-title: "[FB- ]:"
+title: "[FB-#${{ github.event.issue.number }}]:"
 labels: [ "project-task" ]
 assignees:
   - G
