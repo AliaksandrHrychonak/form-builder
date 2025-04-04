@@ -7,7 +7,11 @@ import * as Joi from 'joi';
 import { ENUM_APP_ENVIRONMENT } from '@app/app/constants/app.enum.constant';
 import { APP_LANGUAGE } from '@app/app/constants/app.constant';
 import { HelperModule } from '@common/helper/helper.module';
-import { ENUM_MESSAGE_LANGUAGE } from '@common/message/constants/message.enum.constant';
+
+export enum ENUM_MESSAGE_LANGUAGE {
+    EN = 'en',
+    pl = 'pl',
+}
 
 @Module({
     controllers: [],
