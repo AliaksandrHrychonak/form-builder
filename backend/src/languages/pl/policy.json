@@ -1,0 +1,6 @@
+{
+    "error": {
+        "abilityForbidden": "Nie masz wymaganych uprawnień do wykonania tej czynności.",
+        "roleForbidden": "Twoja rola nie daje dostępu do tego zasobu."
+    }
+}

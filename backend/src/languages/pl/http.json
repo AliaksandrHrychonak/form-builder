@@ -1,0 +1,61 @@
+{
+    "success": {
+        "ok": "OK",
+        "created": "Utworzono",
+        "accepted": "Zaakceptowano",
+        "noContent": "Brak treści"
+    },
+    "redirection": {
+        "movePermanently": "Przeniesiono na stałe",
+        "found": "Znaleziono",
+        "notModified": "Nie zmodyfikowano",
+        "temporaryRedirect": "Przekierowanie tymczasowe",
+        "permanentRedirect": "Przekierowanie stałe"
+    },
+    "clientError": {
+        "badRequest": "Nieprawidłowe żądanie",
+        "unauthorized": "Brak autoryzacji",
+        "forbidden": "Zabronione",
+        "notFound": "Nie znaleziono",
+        "methodNotAllowed": "Metoda niedozwolona",
+        "notAcceptable": "Nie do przyjęcia",
+        "payloadToLarge": "Za duży ładunek",
+        "uriToLarge": "Za długi URI",
+        "unsupportedMediaType": "Nieobsługiwany typ mediów",
+        "unprocessableEntity": "Nie można przetworzyć jednostki",
+        "tooManyRequest": "Zbyt wiele żądań",
+        "requestTimeOut": "Przekroczono czas żądania"
+    },
+    "serverError": {
+        "internalServerError": "Wewnętrzny błąd serwera",
+        "notImplemented": "Nie zaimplementowano",
+        "badGateway": "Nieprawidłowa brama",
+        "serviceUnavailable": "Usługa niedostępna",
+        "gatewayTimeout": "Przekroczono czas bramy"
+    },
+    "200": "OK",
+    "201": "Utworzono",
+    "202": "Zaakceptowano",
+    "204": "Brak treści",
+    "301": "Przeniesiono na stałe",
+    "302": "Znaleziono",
+    "304": "Nie zmodyfikowano",
+    "307": "Przekierowanie tymczasowe",
+    "308": "Przekierowanie stałe",
+    "400": "Nieprawidłowe żądanie",
+    "401": "Brak autoryzacji",
+    "403": "Zabronione",
+    "404": "Nie znaleziono",
+    "405": "Metoda niedozwolona",
+    "406": "Nie do przyjęcia",
+    "413": "Za duży ładunek",
+    "414": "Za długi URI",
+    "415": "Nieobsługiwany typ mediów",
+    "422": "Nie można przetworzyć jednostki",
+    "429": "Zbyt wiele żądań",
+    "500": "Wewnętrzny błąd serwera",
+    "501": "Nie zaimplementowano",
+    "502": "Nieprawidłowa brama",
+    "503": "Usługa niedostępna",
+    "504": "Przekroczono czas bramy"
+}

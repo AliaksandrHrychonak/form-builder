@@ -1,0 +1,24 @@
+{
+    "list": "Lista kluczy API została pobrana pomyślnie.",
+    "get": "Szczegóły klucza API zostały pobrane pomyślnie.",
+    "create": "Nowy klucz API został utworzony pomyślnie.",
+    "reset": "Klucz API został zresetowany pomyślnie.",
+    "update": "Klucz API został zaktualizowany pomyślnie.",
+    "inactive": "Klucz API został oznaczony jako nieaktywny.",
+    "active": "Klucz API został oznaczony jako aktywny.",
+    "updateDate": "Data klucza API została zaktualizowana pomyślnie.",
+    "delete": "Klucz API został usunięty pomyślnie.",
+    "error": {
+        "xApiKey": {
+            "required": "xApiKey jest wymagany.",
+            "notFound": "xApiKey nie został znaleziony.",
+            "inactive": "xApiKey jest nieaktywny.",
+            "expired": "xApiKey wygasł.",
+            "invalid": "xApiKey jest nieprawidłowy.",
+            "forbidden": "xApiKey nie ma uprawnień."
+        },
+        "expired": "Klucz API wygasł.",
+        "isActiveInvalid": "Status aktywności klucza API jest nieprawidłowy.",
+        "notFound": "Klucz API nie został znaleziony."
+    }
+}

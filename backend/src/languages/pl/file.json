@@ -1,0 +1,8 @@
+{
+    "error": {
+        "validationDto": "Dostarczone dane nie spełniają kryteriów walidacji.",
+        "mimeInvalid": "Typ MIME pliku jest nieprawidłowy.",
+        "requiredParseFirst": "Parsowanie danych jest wymagane przed tą operacją.",
+        "required": "To pole jest wymagane i nie może pozostać puste."
+    }
+}

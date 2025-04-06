@@ -1,0 +1,10 @@
+{
+    "list": "Lista ustawień pobrana pomyślnie.",
+    "get": "Szczegóły ustawień pobrane pomyślnie.",
+    "update": "Ustawienie zaktualizowane pomyślnie.",
+    "core": "Ustawienie podstawowe zaktualizowane pomyślnie.",
+    "error": {
+        "valueNotAllowed": "Podana wartość nie jest dozwolona dla tego ustawienia.",
+        "notFound": "Żądane ustawienie nie zostało znalezione."
+    }
+}

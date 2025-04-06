@@ -1,0 +1,16 @@
+{
+    "list": "Lista ról została pobrana pomyślnie.",
+    "get": "Szczegóły roli zostały pobrane pomyślnie.",
+    "create": "Nowa rola została utworzona pomyślnie.",
+    "update": "Rola została zaktualizowana pomyślnie.",
+    "delete": "Rola została usunięta pomyślnie.",
+    "inactive": "Rola została oznaczona jako nieaktywna.",
+    "active": "Rola została oznaczona jako aktywna.",
+    "error": {
+        "exist": "Rola o podanej nazwie już istnieje.",
+        "used": "Rola jest obecnie używana i nie może zostać usunięta.",
+        "isActiveInvalid": "Nieprawidłowy status aktywności roli.",
+        "notFound": "Żądana rola nie została znaleziona.",
+        "inactive": "Rola jest już nieaktywna."
+    }
+}
