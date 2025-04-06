@@ -20,7 +20,7 @@ logs/
 
 # Files not required for production
 .editorconfig
-dockerfile
+Dockerfile
 docker-compose.yml
 cspell.json
 README.md
