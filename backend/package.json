@@ -5,7 +5,7 @@
   "scripts": {
     "prepare": "exit 0",
     "clean": "rimraf dist",
-    "build": "nest build && pnpm sentry:sourcemaps",
+    "build": "nest build",
     "format": "prettier --write '{src,test}/**/*.ts'",
     "start": "nest start",
     "start:dev": "nest start --watch",
