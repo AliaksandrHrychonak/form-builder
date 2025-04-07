@@ -50,7 +50,7 @@ RUN adduser --system --uid 1001 nextjs
 
 # Copy necessary files
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.env ./.env
+#COPY --from=builder /app/.env ./.env
 COPY --from=builder /app/ecosystem.config.js ./ecosystem.config.js
 
 # Copy the standalone output
