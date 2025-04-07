@@ -1,15 +1,69 @@
-FROM node:18-alpine AS frontend-builder
-WORKDIR /app/frontend
-COPY frontend/pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm install
-COPY frontend/ .
-RUN pnpm run build
+# syntax=docker.io/docker/dockerfile:1
 
-FROM node:18-alpine AS frontend
-WORKDIR /app/frontend
-COPY --from=frontend-builder /app/frontend/.next ./.next
-COPY --from=frontend-builder /app/frontend/public ./public
-COPY --from=frontend-builder /app/frontend/pnpm-lock.yaml ./
-COPY --from=frontend-builder /app/frontend/node_modules ./node_modules
+FROM node:18-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Install dependencies based on the preferred package manager
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Disable telemetry during build
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN \
+  if [ -f yarn.lock ]; then yarn run build; \
+  elif [ -f package-lock.json ]; then npm run build; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Install PM2 globally
+RUN npm install -g pm2
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy necessary files
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.env ./.env
+COPY --from=builder /app/ecosystem.config.js ./ecosystem.config.js
+
+# Copy the standalone output
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
 EXPOSE 3000
-CMD ["pnpm", "start"]
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+ENV DOMAIN="form-builder.monster"
+
+# Start the application using PM2
+CMD ["pm2-runtime", "start", "ecosystem.config.js"]
