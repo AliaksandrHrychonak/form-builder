@@ -1,14 +1,16 @@
 FROM node:18-alpine AS backend-builder
-WORKDIR /app/backend
-COPY backend/package*.json ./
+WORKDIR /app
+COPY package*.json ./
+RUN npm install -g pnpm
 RUN pnpm install
-COPY backend/ .
+COPY . .
 RUN pnpm run build
 
 FROM node:18-alpine AS backend
-WORKDIR /app/backend
-COPY --from=backend-builder /app/backend/dist ./dist
-COPY --from=backend-builder /app/backend/package*.json ./
+WORKDIR /app
+COPY --from=backend-builder /app/dist ./dist
+COPY package*.json ./
+RUN npm install -g pnpm
 RUN pnpm install --prod
 EXPOSE 8080
 CMD ["pnpm", "run", "start:prod"]
