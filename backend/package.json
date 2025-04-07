@@ -2,6 +2,7 @@
   "name": " ",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
     "prepare": "exit 0",
     "clean": "rimraf dist",
