@@ -1,22 +1,39 @@
 version: '3.8'
-
 services:
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - DOMAIN=form-builder.monster
     env_file:
-      - ./frontend/.env
-    depends_on:
-      - backend
+      - frontend/.env
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    environment:
+      - NODE_ENV=production
     env_file:
-      - ./backend/.env
+      - backend/.env
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/public/hello" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
