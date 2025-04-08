@@ -12,4 +12,4 @@ export const locales: Locale[] = [
     { code: 'pl', name: 'Polish' },
 ];
 
-export const DEFAULT_LOCALE = locales[0].code;
+export const DEFAULT_LOCALE = (locales[0] && locales[0].code) ?? 'en';
