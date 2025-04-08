@@ -4,7 +4,7 @@ import { createContext } from 'react';
 
 import type { DictionaryType } from '@shared/config';
 
-interface DictionaryContextProps {
+export interface DictionaryContextProps {
     dictionary: DictionaryType;
     lang: string;
 }

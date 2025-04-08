@@ -1,20 +1,6 @@
 {
-	"main": {
-		"intro": {
-			"title": "Efficient Code Review",
-			"subtitle": "Everything you need to find and reuse review comments"
-		}
-	},
+	"main": {},
 	"metadata": {
-		"main" : {
-			"title": "Home",
-			"description": "",
-			"keywords": ["1 слово", "2 слово"]
-		},
-		"documentation" : {
-			"title": "Documentation",
-			"description": "",
-			"keywords": ["1 слово", "2 слово"]
-		}
+		"main" : {}
 	}
 }

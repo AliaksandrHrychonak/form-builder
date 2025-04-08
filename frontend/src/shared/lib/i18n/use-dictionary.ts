@@ -4,8 +4,9 @@ import { useContext } from 'react';
 
 import { DictionaryContext } from './dictionary-context';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const useDictionary = () => {
+import type { DictionaryContextProps } from './dictionary-context';
+
+export const useDictionary = (): DictionaryContextProps => {
     const context = useContext(DictionaryContext);
     if (!context) {
         throw new Error('useDictionary must be used within DictionaryProvider');
