@@ -1,15 +1,11 @@
+'use client';
+
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import React from 'react';
 
 import { themeOptions } from '@shared/config';
-import {
-    Button,
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@shared/ui';
+import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@shared/ui';
 
 import type { FC } from 'react';
 
@@ -26,10 +22,7 @@ export const ThemeSwitcher: FC = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
                 {themeOptions.map((option) => (
-                    <DropdownMenuItem
-                        key={option.value}
-                        onClick={() => setTheme(option.value)}
-                    >
+                    <DropdownMenuItem key={option.value} onClick={() => setTheme(option.value)}>
                         {option.label}
                     </DropdownMenuItem>
                 ))}

@@ -18,3 +18,4 @@ export * from './dropdown-menu';
 export * from './avatar';
 export * from './carousel';
 export * from './scroll-area';
+export * from './logo';
