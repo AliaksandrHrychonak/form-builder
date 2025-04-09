@@ -1,6 +1,28 @@
 {
-	"main": {},
+	"main": {
+		"title": "Home"
+	},
+	"signin": {
+		"title": "Sign in"
+	},
+	"signup": {
+		"title": "Sign up"
+	},
 	"metadata": {
-		"main" : {}
+		"main" : {
+			"title": "View public templates",
+			"description": "View public templates",
+			"keywords": ["form", "builder", "generator", "form template"]
+		},
+		"signin" : {
+			"title": "Sign in",
+			"description": "",
+			"keywords": ["form", "builder", "generator", "form template"]
+		},
+		"signup" : {
+			"title": "Sign in",
+			"description": "",
+			"keywords": ["form", "builder", "generator", "form template"]
+		}
 	}
 }
