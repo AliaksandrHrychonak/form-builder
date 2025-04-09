@@ -1,6 +1,28 @@
 {
-	"main": {},
+	"main": {
+		"title": "Strona główna"
+	},
+	"signin": {
+		"title": "Zaloguj się"
+	},
+	"signup": {
+		"title": "Zarejestruj się"
+	},
 	"metadata": {
-		"main" : {}
+		"main": {
+			"title": "Przeglądaj publiczne szablony",
+			"description": "Przeglądaj publiczne szablony",
+			"keywords": ["formularz", "kreator", "generator", "szablon formularza"]
+		},
+		"signin": {
+			"title": "Zaloguj się",
+			"description": "",
+			"keywords": ["formularz", "kreator", "generator", "szablon formularza"]
+		},
+		"signup": {
+			"title": "Zarejestruj się",
+			"description": "",
+			"keywords": ["formularz", "kreator", "generator", "szablon formularza"]
+		}
 	}
 }

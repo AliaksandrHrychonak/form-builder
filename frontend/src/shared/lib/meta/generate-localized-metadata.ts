@@ -1,4 +1,3 @@
-
 import { getDictionary } from '../i18n';
 import { generateAlternatesMetadata } from './generate-alternates-metadata';
 import { generateMetadata } from './generate-metadata';
@@ -12,18 +11,11 @@ import type { Metadata } from 'next';
  * @param pathname - Page URL path
  * @returns Promise with localized metadata
  */
-export const generateLocalizedMetadata = async (
-    params: { lang: string },
-    pathname: string
-): Promise<Metadata> => {
+export const generateLocalizedMetadata = async (params: { lang: string }, pathname: string): Promise<Metadata> => {
     try {
         const { lang } = await params;
         const dictionary = await getDictionary(lang ?? 'en');
         const pageMetadata = getPageMetadata(pathname, dictionary.metadata);
-        console.log({
-            ...generateMetadata(pageMetadata),
-            ...generateAlternatesMetadata(lang, pathname),
-        });
         return {
             ...generateMetadata(pageMetadata),
             ...generateAlternatesMetadata(lang, pathname),

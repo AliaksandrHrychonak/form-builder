@@ -1,22 +1,22 @@
 import type { Metadata } from 'next';
 
 export const BASE_META: Metadata = {
-    title: 'Comment Provider',
+    title: 'Form Builder',
     // description: '',
-    applicationName: 'Comment Provider',
+    applicationName: 'Form Builder',
     // keywords: [],
 
     referrer: 'origin-when-cross-origin',
     // authors: [],
 
-    creator: 'Comment Provider Team',
-    publisher: 'Comment Provider Publisher',
+    creator: 'Form Builder Team',
+    publisher: 'Form Builder Publisher',
     formatDetection: {
         email: false,
         address: false,
         telephone: false,
     },
-    metadataBase: new URL('https://comment-provider.monster'),
+    metadataBase: new URL('https://form-builder.monster'),
 
     // Open Graph
     // openGraph: {
@@ -100,7 +100,6 @@ export const BASE_META: Metadata = {
     //     },
     // },
 
-    // Роботы
     robots: {
         index: true,
         follow: true,
@@ -197,7 +196,6 @@ export const BASE_META: Metadata = {
         ],
     },
 
-    // Верификация
     // verification: {
     //     google: 'google-site-verification-code',
     //     yandex: 'yandex-verification-code',
@@ -209,13 +207,12 @@ export const BASE_META: Metadata = {
     //     },
     // },
 
-    // Прочие метаданные
     manifest: '/manifest.json',
     generator: 'Next.js',
 
     appleWebApp: {
         capable: true,
-        title: 'Comment Provider App',
+        title: 'Form Builder App',
         statusBarStyle: 'black-translucent',
         // startupImage: ['/startup-640x1136.png', '/startup-750x1334.png'],
     },
