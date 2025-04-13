@@ -1,28 +1,36 @@
 {
 	"main": {
-		"title": "Strona główna"
+		"title": "Home"
 	},
 	"signin": {
-		"title": "Zaloguj się"
+		"title": "Sign in"
 	},
 	"signup": {
-		"title": "Zarejestruj się"
+		"title": "Sign up"
+	},
+	"dashboard": {
+		"title": "Sign up"
 	},
 	"metadata": {
-		"main": {
-			"title": "Przeglądaj publiczne szablony",
-			"description": "Przeglądaj publiczne szablony",
-			"keywords": ["formularz", "kreator", "generator", "szablon formularza"]
+		"main" : {
+			"title": "View public templates",
+			"description": "View public templates",
+			"keywords": ["form", "builder", "generator", "form template"]
 		},
-		"signin": {
-			"title": "Zaloguj się",
+		"signin" : {
+			"title": "Sign in",
 			"description": "",
-			"keywords": ["formularz", "kreator", "generator", "szablon formularza"]
+			"keywords": ["form", "builder", "generator", "form template"]
 		},
-		"signup": {
-			"title": "Zarejestruj się",
+		"signup" : {
+			"title": "Sign in",
 			"description": "",
-			"keywords": ["formularz", "kreator", "generator", "szablon formularza"]
+			"keywords": ["form", "builder", "generator", "form template"]
+		},
+		"dashboard" : {
+			"title": "Sign in",
+			"description": "",
+			"keywords": ["form", "builder", "generator", "form template"]
 		}
 	}
 }

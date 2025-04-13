@@ -12,6 +12,4 @@ export type DictionaryType = typeof en;
 export const dictionariesList: Record<string, () => Promise<DictionaryType>> = {
     en: () => import('./en.json').then((module) => module.default),
     pl: () => import('./pl.json').then((module) => module.default),
-    // TODO fix this cast
-    'manifest.json': () => import('./en.json').then((module) => module.default),
 };
