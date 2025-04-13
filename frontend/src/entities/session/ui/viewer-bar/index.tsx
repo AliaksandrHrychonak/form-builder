@@ -1,10 +1,10 @@
 'use client';
 
-import { LogOutIcon, MoreVerticalIcon } from 'lucide-react';
+import { Children } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
     DropdownMenuTrigger,
-    useSidebar,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuLabel,
@@ -12,77 +12,63 @@ import {
     DropdownMenuItem,
     Avatar,
     AvatarFallback,
-    AvatarImage,
-    Skeleton,
     Button,
+    AvatarImage,
 } from '@shared/ui';
 
-import { useSessionStore } from '../../model';
+import type { IViewerProfile } from '@shared/api';
+import type { FC, JSX, ReactNode } from 'react';
 
-import type { FC, JSX } from 'react';
+interface IViewerBarProps {
+    profileViewer: IViewerProfile | undefined;
+    children?: ReactNode;
+}
 
-interface IViewerBarProps {}
-
-export const ViewerBar: FC<IViewerBarProps> = (): JSX.Element => {
-    const viewer = useSessionStore((state) => state.user);
-    const { isMobile } = useSidebar();
-
-    if (!viewer) {
-        return (
-            <div className='flex items-center w-full gap-2'>
-                <Skeleton className='h-8 w-8 rounded-lg' />
-                <div className='grid flex-1 gap-1'>
-                    <Skeleton className='h-4 w-32' />
-                    <Skeleton className='h-3 w-24' />
-                </div>
-                <Skeleton className='h-4 w-4 ml-auto' />
-            </div>
-        );
-    }
-
-    const { username, id, avatar } = viewer;
-
+export const ViewerBar: FC<IViewerBarProps> = ({ profileViewer, children }): JSX.Element => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button
-                    size='lg'
-                    className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
-                >
-                    <Avatar className='h-8 w-8 rounded-lg grayscale'>
-                        <AvatarImage src={viewer.avatar} alt={viewer.username} />
-                        <AvatarFallback className='rounded-lg uppercase'>{viewer.username[0]}</AvatarFallback>
+                <Button variant='outline' className='px-0 w-9'>
+                    <Avatar className='h-full w-full rounded-lg grayscale'>
+                        <AvatarImage
+                            src={profileViewer?.photo?.completedUrl}
+                            alt={`${profileViewer?.firstName} ${profileViewer?.lastName}`}
+                        />
+                        <AvatarFallback className='rounded-lg uppercase'>{profileViewer?.firstName[0]}</AvatarFallback>
                     </Avatar>
-                    <div className='grid flex-1 text-left text-sm leading-tight'>
-                        <span className='truncate font-medium max-w-52'>{username}</span>
-                        <span className='text-xs text-muted-foreground truncate max-w-52'>{id}</span>
-                    </div>
-                    <MoreVerticalIcon className='ml-auto size-4' />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
                 className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg'
-                side={isMobile ? 'bottom' : 'right'}
+                side='bottom'
                 align='end'
                 sideOffset={4}
             >
                 <DropdownMenuLabel className='p-0 font-normal'>
                     <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                         <Avatar className='h-8 w-8 rounded-lg grayscale'>
-                            <AvatarImage src={avatar} alt={username} />
-                            <AvatarFallback className='rounded-lg uppercase'>{username[0]}</AvatarFallback>
+                            <AvatarImage
+                                src={profileViewer?.photo?.completedUrl}
+                                alt={`${profileViewer?.firstName} ${profileViewer?.lastName}`}
+                            />
+                            <AvatarFallback className='rounded-lg uppercase'>
+                                {profileViewer?.firstName[0]}
+                            </AvatarFallback>
                         </Avatar>
                         <div className='grid flex-1 text-left text-sm leading-tight'>
-                            <span className='truncate font-medium'>{username}</span>
-                            <span className='truncate text-xs text-muted-foreground'>{id}</span>
+                            <span className='truncate font-medium max-w-52'>{`${profileViewer?.firstName} ${profileViewer?.lastName}`}</span>
+                            <span className='text-xs text-muted-foreground truncate max-w-52'>
+                                {profileViewer?.email}
+                            </span>
                         </div>
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                    <LogOutIcon />
-                    Log Out
-                </DropdownMenuItem>
+                {Children.map(children, (child) => (
+                    <DropdownMenuItem key={uuidv4()} asChild>
+                        {child}
+                    </DropdownMenuItem>
+                ))}
             </DropdownMenuContent>
         </DropdownMenu>
     );
