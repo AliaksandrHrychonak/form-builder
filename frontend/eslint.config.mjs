@@ -13,6 +13,7 @@ const compat = new FlatCompat({ baseDirectory: __dirname });
 
 const eslintConfig = [
     ...compat.extends('next/core-web-vitals'),
+    // ...pluginQuery.configs['flat/recommended'],
     {
         ignores: [
             'node_modules/**',
