@@ -8,7 +8,7 @@ import {
 export default registerAs(
     'app',
     (): Record<string, any> => ({
-        name: process.env.APP_NAME ?? 'forms-builder',
+        name: process.env.APP_NAME ?? 'form-builder',
         env: process.env.APP_ENV ?? ENUM_APP_ENVIRONMENT.DEVELOPMENT,
         timezone: process.env.APP_TIMEZONE ?? ENUM_APP_TIMEZONE.EUROPE_MINSK,
         repoVersion: version,
@@ -30,4 +30,5 @@ export default registerAs(
             prefix: 'v',
             version: process.env.URL_VERSION ?? '1',
         },
-    }));
+    })
+);
