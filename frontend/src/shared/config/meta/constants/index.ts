@@ -197,7 +197,7 @@ export const BASE_META: Metadata = {
     },
 
     // verification: {
-    //     google: 'google-site-verification-code',
+    //     appleSignin: 'appleSignin-site-verification-code',
     //     yandex: 'yandex-verification-code',
     //     yahoo: 'yahoo-site-verification-code',
     //     bing: 'bing-site-verification-code',
@@ -207,7 +207,6 @@ export const BASE_META: Metadata = {
     //     },
     // },
 
-    manifest: '/manifest.json',
     generator: 'Next.js',
 
     appleWebApp: {
