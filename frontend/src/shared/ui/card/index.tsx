@@ -21,13 +21,13 @@ const CardHeader = ({ className, ...props }: CardHeaderProps): JSX.Element => (
 type CardTitleProps = ComponentProps<'div'>;
 
 const CardTitle = ({ className, ...props }: CardTitleProps): JSX.Element => (
-    <div data-slot='title' className={cn('font-semibold leading-none tracking-tight', className)} {...props} />
+    <h2 data-slot='title' className={cn('font-semibold leading-none tracking-tight', className)} {...props} />
 );
 
 type CardDescriptionProps = ComponentProps<'div'>;
 
 const CardDescription = ({ className, ...props }: CardDescriptionProps): JSX.Element => (
-    <div data-slot='description' className={cn('text-sm text-muted-foreground', className)} {...props} />
+    <p data-slot='description' className={cn('text-sm text-muted-foreground', className)} {...props} />
 );
 
 type CardContentProps = ComponentProps<'div'>;
@@ -39,7 +39,7 @@ const CardContent = ({ className, ...props }: CardContentProps): JSX.Element => 
 type CardFooterProps = ComponentProps<'div'>;
 
 const CardFooter = ({ className, ...props }: CardFooterProps): JSX.Element => (
-    <div data-slot='footer' className={cn('flex items-center p-6 pt-0', className)} {...props} />
+    <footer data-slot='footer' className={cn('flex items-center p-6 pt-0', className)} {...props} />
 );
 
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
