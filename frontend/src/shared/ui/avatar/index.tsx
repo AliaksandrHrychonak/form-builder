@@ -34,7 +34,7 @@ type AvatarFallbackProps = ComponentProps<typeof AvatarPrimitive.Fallback> & {
 const AvatarFallback = ({ className, ...props }: AvatarFallbackProps): JSX.Element => (
     <AvatarPrimitive.Fallback
         data-slot='fallback'
-        className={cn('flex h-full w-full items-center justify-center rounded-full bg-muted', className)}
+        className={cn('flex h-full w-full items-center justify-center rounded-full bg-transparent', className)}
         {...props}
     />
 );

@@ -1,12 +1,18 @@
-import Image from 'next/image';
+import { LibraryIcon } from 'lucide-react';
 import Link from 'next/link';
 
-import type { JSX } from 'react';
+import { cn } from '@shared/lib';
 
-export const Logo = (): JSX.Element => {
+import type { ComponentProps, FC, JSX } from 'react';
+
+interface ILogoProps extends Omit<ComponentProps<typeof Link>, 'href'> {
+    href?: string;
+}
+
+export const Logo: FC<ILogoProps> = ({ className, href = '/', ...props }): JSX.Element => {
     return (
-        <Link href='/' className='flex items-center'>
-            <Image src='favicons/logo.svg' alt='Logo' width={25} height={25} className='cursor-pointer' />
+        <Link href={href} className={cn('flex items-center', className)} {...props}>
+            <LibraryIcon fill='currentColor' size={25} />
         </Link>
     );
 };

@@ -18,21 +18,24 @@ export const handleLocaleRedirection = (
 ): NextResponse | null => {
     const { pathname } = request.nextUrl;
 
-    // Check if the given pathname has a supported locale
     const pathnameHasLocale = localeCodes.some(
         (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     );
 
     if (!pathnameHasLocale) {
-        // Get the best matching locale (user's browser settings or default 'en')
         const locale = getLocale(request, localeCodes, defaultLocale);
-
-        // Check if the detected locale in the pathname is valid
         const isValidLocale = localeCodes.includes(locale);
-
-        // Create a new URL with the detected locale (default to 'en' if not valid)
         const redirectLocale = isValidLocale ? locale : defaultLocale;
-        const redirectUrl = new URL(`/${redirectLocale}/${pathname.split('/').slice(2).join('/')}`, request.url);
+
+        let pathWithoutLocale = pathname;
+        if (pathname === '/') {
+            pathWithoutLocale = '';
+        } else if (pathname.startsWith('/')) {
+            pathWithoutLocale = pathname.slice(1);
+        }
+
+        const redirectPath = pathWithoutLocale ? `/${redirectLocale}/${pathWithoutLocale}` : `/${redirectLocale}`;
+        const redirectUrl = new URL(redirectPath, request.url);
 
         return NextResponse.redirect(redirectUrl);
     }

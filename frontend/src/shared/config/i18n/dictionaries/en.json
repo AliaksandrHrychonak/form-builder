@@ -8,6 +8,9 @@
 	"signup": {
 		"title": "Sign up"
 	},
+	"dashboard": {
+		"title": "Sign up"
+	},
 	"metadata": {
 		"main" : {
 			"title": "View public templates",
@@ -20,6 +23,11 @@
 			"keywords": ["form", "builder", "generator", "form template"]
 		},
 		"signup" : {
+			"title": "Sign in",
+			"description": "",
+			"keywords": ["form", "builder", "generator", "form template"]
+		},
+		"dashboard" : {
 			"title": "Sign in",
 			"description": "",
 			"keywords": ["form", "builder", "generator", "form template"]

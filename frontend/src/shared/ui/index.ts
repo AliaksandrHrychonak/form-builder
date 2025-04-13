@@ -19,3 +19,5 @@ export * from './avatar';
 export * from './carousel';
 export * from './scroll-area';
 export * from './logo';
+export * from './multi-step-form';
+export * from './dialog';

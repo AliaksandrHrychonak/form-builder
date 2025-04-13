@@ -67,12 +67,12 @@ const FormMessage = ({ className, children, ...props }: ComponentProps<'p'>): JS
     const body = error ? String(error?.message) : children;
 
     return (
-        <div className='min-h-[1.5rem] relative'>
+        <div className='relative'>
             {body && (
                 <p
                     data-slot='message'
                     id={formMessageId}
-                    className={cn('absolute text-destructive text-[0.8rem] font-medium', className)}
+                    className={cn('absolute top-[-4] text-destructive text-[0.8rem] font-medium', className)}
                     {...props}
                 >
                     {body}
