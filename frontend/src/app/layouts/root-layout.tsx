@@ -4,9 +4,8 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { getDictionary } from '@shared/lib/i18n';
 import { Toaster } from '@shared/ui';
 
-import { WithDictionaryProvider, WithQueryClient, WithThemeProvider } from '../providers';
+import { WithAuthProvider, WithDictionaryProvider, WithQueryClient, WithThemeProvider } from '../providers';
 
-import type { Metadata } from 'next';
 import type { FC, ReactNode } from 'react';
 
 const geistSans = Geist({
@@ -18,18 +17,6 @@ const geistMono = Geist_Mono({
     variable: '--font-geist-mono',
     subsets: ['latin'],
 });
-
-interface RootLayoutProps {
-    children: ReactNode;
-}
-
-export const metadata: Metadata = {
-    title: 'Book sample generator',
-};
-
-interface RootLayoutProps {
-    children: ReactNode;
-}
 
 interface RootLayoutProps {
     children: ReactNode;
@@ -54,7 +41,7 @@ const RootLayout: FC<RootLayoutProps> = async ({ children, params }) => {
                             enableSystem
                             disableTransitionOnChange
                         >
-                            {children}
+                            <WithAuthProvider>{children}</WithAuthProvider>
                         </WithThemeProvider>
                         <Toaster />
                     </WithQueryClient>
