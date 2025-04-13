@@ -1,15 +1,17 @@
 'use client';
 
+import { LogOutIcon } from 'lucide-react';
 import React from 'react';
 
-import { Button } from '@shared/ui';
+import { logout } from '@features/session/logout/api';
+import { DropdownMenuItem } from '@shared/ui';
 
 import type { JSX } from 'react';
 
-export const ButtonLogout = (): JSX.Element => {
+export const DropdownMenuItemLogout = (): JSX.Element => {
     return (
-        <Button variant='ghost' className='fixed top-5 right-5'>
-            Log out
-        </Button>
+        <DropdownMenuItem onClick={() => logout()}>
+            <LogOutIcon /> Log out
+        </DropdownMenuItem>
     );
 };
