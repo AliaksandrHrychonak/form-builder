@@ -1,0 +1,7 @@
+export enum ENUM_TEMPLATE_QUESTION_TYPE {
+    TEXT = 'TEXT',
+    NUMBER = 'NUMBER',
+    CHOICE = 'CHOICE',
+    MULTIPLE_CHOICE = 'MULTIPLE-CHOICE',
+    DATE = 'DATE',
+}
