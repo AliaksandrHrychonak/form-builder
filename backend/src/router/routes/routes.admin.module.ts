@@ -10,12 +10,15 @@ import { SettingAdminController } from 'src/modules/setting/controllers/setting.
 import { SettingModule } from 'src/modules/setting/setting.module';
 import { UserAdminController } from 'src/modules/user/controllers/user.admin.controller';
 import { UserModule } from 'src/modules/user/user.module';
+import { TemplateAdminController } from '../../modules/template/controllers/template.admin.controller';
+import { TemplateModule } from '../../modules/template/template.module';
 @Module({
     controllers: [
         ApiKeyAdminController,
         SettingAdminController,
         RoleAdminController,
         UserAdminController,
+        TemplateAdminController,
     ],
     providers: [],
     exports: [],
@@ -27,6 +30,7 @@ import { UserModule } from 'src/modules/user/user.module';
         UserModule,
         AuthModule,
         EmailModule,
+        TemplateModule,
     ],
 })
 export class RoutesAdminModule {}

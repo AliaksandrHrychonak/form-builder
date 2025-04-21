@@ -7,15 +7,27 @@ import { SettingPublicController } from 'src/modules/setting/controllers/setting
 import { SettingModule } from 'src/modules/setting/setting.module';
 import { UserPublicController } from 'src/modules/user/controllers/user.public.controller';
 import { UserModule } from 'src/modules/user/user.module';
+import { TemplateModule } from '../../modules/template/template.module';
+import { TemplatePublicController } from '../../modules/template/controllers/template.public.controller';
+import { PaginationModule } from '../../common/pagination/pagination.module';
 
 @Module({
     controllers: [
         HelloPublicController,
         SettingPublicController,
         UserPublicController,
+        TemplatePublicController,
     ],
     providers: [],
     exports: [],
-    imports: [SettingModule, UserModule, AuthModule, RoleModule, EmailModule],
+    imports: [
+        SettingModule,
+        UserModule,
+        AuthModule,
+        RoleModule,
+        EmailModule,
+        TemplateModule,
+        PaginationModule,
+    ],
 })
 export class RoutesPublicModule {}
