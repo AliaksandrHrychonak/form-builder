@@ -11,6 +11,7 @@ import { MessageService } from 'src/common/message/services/message.service';
 async function bootstrap() {
     const app: NestApplication = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService);
+
     const databaseUri: string = configService.get<string>('database.uri');
     const env: string = configService.get<string>('app.env');
     const timezone: string = configService.get<string>('app.timezone');
