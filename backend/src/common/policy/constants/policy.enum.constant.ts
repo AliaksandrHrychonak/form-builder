@@ -24,6 +24,7 @@ export enum ENUM_POLICY_SUBJECT {
     SETTING = 'SETTING',
     ROLE = 'ROLE',
     USER = 'USER',
+    TEMPLATE = 'TEMPLATE',
 }
 
 export enum ENUM_POLICY_ROLE_TYPE {
