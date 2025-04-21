@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import { version } from 'package.json';
+import { version } from '../../package.json';
 import {
     ENUM_APP_ENVIRONMENT,
     ENUM_APP_TIMEZONE,
@@ -11,7 +11,7 @@ export default registerAs(
         name: process.env.APP_NAME ?? 'form-builder',
         env: process.env.APP_ENV ?? ENUM_APP_ENVIRONMENT.DEVELOPMENT,
         timezone: process.env.APP_TIMEZONE ?? ENUM_APP_TIMEZONE.EUROPE_MINSK,
-        repoVersion: version,
+        version,
         globalPrefix:
             process.env.APP_ENV === ENUM_APP_ENVIRONMENT.PRODUCTION
                 ? ''
