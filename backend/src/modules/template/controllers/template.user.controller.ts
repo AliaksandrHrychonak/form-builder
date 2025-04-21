@@ -58,6 +58,7 @@ import { DatabaseIdResponseDto } from '../../../common/database/dtos/response/da
 import { ENUM_APP_STATUS_CODE_ERROR } from '../../../app/constants/app.status-code.constant';
 import { TemplateUpdateManyIdsRequestDto } from '../dtos/request/template-many-ids.update.request.dto';
 import { TemplateSharedManyRequestDto } from '../dtos/request/template-shared-many.update.request.dto';
+import { TemplateUpdateRequestDto } from '../dtos/request/template.update.request.dto';
 
 @ApiTags('modules.template.user')
 @Controller({
@@ -237,6 +238,89 @@ export class TemplateUserController {
             await session.abortTransaction();
             await session.endSession();
 
+            throw new InternalServerErrorException({
+                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
+                message: 'http.serverError.internalServerError',
+                _error: err.message,
+            });
+        }
+    }
+
+    @Response('template.update')
+    @PolicyAbilityProtected({
+        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
+        action: [ENUM_POLICY_ACTION.READ, ENUM_POLICY_ACTION.UPDATE],
+    })
+    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
+    @UserProtected()
+    @AuthJwtAccessProtected()
+    @ApiKeyPublicProtected()
+    @Patch('/update/:templateId')
+    async update(
+        @Param(
+            'templateId',
+            RequestRequiredPipe,
+            TemplateParsePipe,
+            TemplateAccessPipe
+        )
+        template: TemplateDoc,
+        @Body()
+        {
+            title,
+            description,
+            isPublic,
+            forms,
+            questions,
+            sharedUsers,
+            tags,
+            topic,
+        }: TemplateUpdateRequestDto
+    ): Promise<void> {
+        const promises: Promise<any>[] = [
+            this.templateFormService.existsByIds(forms),
+            this.templateQuestionService.existsByIds(questions),
+            this.templateTagService.existsByIds(tags),
+            this.userService.existsByIds(sharedUsers),
+        ];
+
+        const [checkForms, checkQuestions, checkTags, checkUsers] =
+            await Promise.all(promises);
+
+        if (!checkForms) {
+            throw new NotFoundException({
+                statusCode: 404,
+                message: 'checkForms',
+            });
+        } else if (!checkQuestions) {
+            throw new NotFoundException({
+                statusCode: 404,
+                message: 'checkQuestions',
+            });
+        } else if (!checkTags) {
+            throw new NotFoundException({
+                statusCode: 404,
+                message: 'checkTags',
+            });
+        } else if (!checkUsers) {
+            throw new NotFoundException({
+                statusCode: 404,
+                message: 'checkUsers',
+            });
+        }
+
+        try {
+            await this.templateService.update(template, {
+                title,
+                description,
+                isPublic,
+                forms,
+                questions,
+                sharedUsers,
+                tags,
+                topic,
+            });
+            return;
+        } catch (err: any) {
             throw new InternalServerErrorException({
                 statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
                 message: 'http.serverError.internalServerError',

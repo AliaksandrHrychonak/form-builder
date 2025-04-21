@@ -17,10 +17,6 @@ import {
     TemplateEntity,
 } from 'src/modules/template/repository/entities/template.entity';
 import { ClientSession } from 'mongoose';
-import {
-    UserDoc,
-    UserEntity,
-} from '../../user/repository/entities/user.entity';
 import { TemplateQuestionEntity } from '../repository/entities/template-question.entity';
 import { TemplateFormEntity } from '../repository/entities/template-form.entity';
 import { TemplateCommentEntity } from '../repository/entities/template-comment.entity';
@@ -30,7 +26,8 @@ import { plainToInstance } from 'class-transformer';
 import { ITemplateDoc } from '../interfaces/template.interface';
 import { TemplateGetResponseDto } from '../dtos/response/template.get.response.dto';
 import { TemplateListResponseDto } from '../dtos/response/template.list.response.dto';
-import { ENUM_USER_STATUS } from '../../user/constants/user.enum.constant';
+import { TemplateUpdateRequestDto } from '../dtos/request/template.update.request.dto';
+import { UserEntity } from '../../user/repository/entities/user.entity';
 
 @Injectable()
 export class TemplateService implements ITemplateService {
@@ -188,6 +185,32 @@ export class TemplateService implements ITemplateService {
         template: ITemplateDoc
     ): Promise<TemplateGetResponseDto> {
         return plainToInstance(TemplateGetResponseDto, template.toObject());
+    }
+
+    async update(
+        repository: TemplateDoc,
+        {
+            title,
+            description,
+            isPublic,
+            forms,
+            questions,
+            sharedUsers,
+            tags,
+            topic,
+        }: TemplateUpdateRequestDto,
+        options?: IDatabaseSaveOptions
+    ): Promise<TemplateDoc> {
+        repository.title = title;
+        repository.description = description;
+        repository.isPublic = isPublic;
+        repository.forms = forms;
+        repository.questions = questions;
+        repository.sharedUsers = sharedUsers;
+        repository.tags = tags;
+        repository.topic = topic;
+
+        return this.templateRepository.save(repository, options);
     }
 
     async public(
