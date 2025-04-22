@@ -63,7 +63,10 @@ export type IDatabaseCreateManyOptions<T = any> = Pick<
 >;
 
 export type IDatabaseSoftDeleteManyOptions<T = any> = IDatabaseManyOptions<T>;
-
+export type IDatabaseUpdateOptions = Omit<
+    IDatabaseFindOneOptions,
+    'select' | 'join'
+>;
 export type IDatabaseRestoreManyOptions<T = any> = IDatabaseManyOptions<T>;
 
 // Raw

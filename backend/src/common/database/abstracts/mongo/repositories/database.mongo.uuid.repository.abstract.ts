@@ -23,6 +23,7 @@ import {
     IDatabaseFindOneLockOptions,
     IDatabaseRawFindAllOptions,
     IDatabaseRawGetTotalOptions,
+    IDatabaseUpdateOptions,
 } from 'src/common/database/interfaces/database.interface';
 import { ENUM_PAGINATION_ORDER_DIRECTION_TYPE } from 'src/common/pagination/constants/pagination.enum.constant';
 
@@ -565,6 +566,24 @@ export abstract class DatabaseMongoUUIDRepositoryAbstract<
         } catch (err: unknown) {
             throw err;
         }
+    }
+
+    async update(
+        find: Record<string, any>,
+        data: UpdateQuery<Entity> | UpdateWithAggregationPipeline,
+        options?: IDatabaseUpdateOptions
+    ): Promise<EntityDocument> {
+        return this._repository.findOneAndUpdate(
+            {
+                ...find,
+                deleted: options?.withDeleted ?? false,
+            },
+            data,
+            {
+                ...options,
+                new: true,
+            }
+        );
     }
 
     async updateMany<Dto>(
