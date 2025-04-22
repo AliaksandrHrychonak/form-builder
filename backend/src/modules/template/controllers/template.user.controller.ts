@@ -59,6 +59,7 @@ import { ENUM_APP_STATUS_CODE_ERROR } from '../../../app/constants/app.status-co
 import { TemplateUpdateManyIdsRequestDto } from '../dtos/request/template-many-ids.update.request.dto';
 import { TemplateSharedManyRequestDto } from '../dtos/request/template-shared-many.update.request.dto';
 import { TemplateUpdateRequestDto } from '../dtos/request/template.update.request.dto';
+import { ENUM_TEMPLATE_QUESTION_STATUS_CODE_ERROR } from '../constants/template.status-code.constant';
 
 @ApiTags('modules.template.user')
 @Controller({
@@ -98,7 +99,7 @@ export class TemplateUserController {
     ): Promise<IResponsePaging<TemplateListResponseDto>> {
         const find: Record<string, any> = {
             ..._search,
-            $or: [{ owner: user._id }, { sharedUsers: user._id }],
+            owner: user._id,
         };
 
         const templates: TemplateDoc[] = await this.templateService.findAll(
@@ -168,40 +169,21 @@ export class TemplateUserController {
             title,
             description,
             isPublic,
-            forms,
-            questions,
             sharedUsers,
-            tags,
             topic,
         }: TemplateCreateRequestDto,
         @User() user: UserDoc
     ): Promise<IResponse<DatabaseIdResponseDto>> {
+        const uniqueSharedUsersIds = [...new Set(sharedUsers)];
+        const uniqueTopic = [...new Set(topic)];
+
         const promises: Promise<any>[] = [
-            this.templateFormService.existsByIds(forms),
-            this.templateQuestionService.existsByIds(questions),
-            this.templateTagService.existsByIds(tags),
-            this.userService.existsByIds(sharedUsers),
+            this.userService.existsByIds(uniqueSharedUsersIds),
         ];
 
-        const [checkForms, checkQuestions, checkTags, checkUsers] =
-            await Promise.all(promises);
+        const [checkUsers] = await Promise.all(promises);
 
-        if (!checkForms) {
-            throw new NotFoundException({
-                statusCode: 404,
-                message: 'checkForms',
-            });
-        } else if (!checkQuestions) {
-            throw new NotFoundException({
-                statusCode: 404,
-                message: 'checkQuestions',
-            });
-        } else if (!checkTags) {
-            throw new NotFoundException({
-                statusCode: 404,
-                message: 'checkTags',
-            });
-        } else if (!checkUsers) {
+        if (!checkUsers) {
             throw new NotFoundException({
                 statusCode: 404,
                 message: 'checkUsers',
@@ -218,12 +200,9 @@ export class TemplateUserController {
                     title,
                     description,
                     isPublic,
-                    forms,
                     owner: user._id,
-                    questions,
-                    sharedUsers,
-                    tags,
-                    topic,
+                    sharedUsers: uniqueSharedUsersIds,
+                    topic: uniqueTopic,
                 },
                 { session }
             );
@@ -276,11 +255,17 @@ export class TemplateUserController {
             topic,
         }: TemplateUpdateRequestDto
     ): Promise<void> {
+        const uniqueQuestionsIds = [...new Set(questions)];
+        const uniqueFormsIds = [...new Set(forms)];
+        const uniqueTagsIds = [...new Set(tags)];
+        const uniqueSharedUsersIds = [...new Set(sharedUsers)];
+        const uniqueTopic = [...new Set(topic)];
+
         const promises: Promise<any>[] = [
-            this.templateFormService.existsByIds(forms),
-            this.templateQuestionService.existsByIds(questions),
-            this.templateTagService.existsByIds(tags),
-            this.userService.existsByIds(sharedUsers),
+            this.templateFormService.existsByIds(uniqueFormsIds),
+            this.templateQuestionService.existsByIds(uniqueQuestionsIds),
+            this.templateTagService.existsByIds(uniqueTagsIds),
+            this.userService.existsByIds(uniqueSharedUsersIds),
         ];
 
         const [checkForms, checkQuestions, checkTags, checkUsers] =
@@ -293,8 +278,9 @@ export class TemplateUserController {
             });
         } else if (!checkQuestions) {
             throw new NotFoundException({
-                statusCode: 404,
-                message: 'checkQuestions',
+                statusCode:
+                    ENUM_TEMPLATE_QUESTION_STATUS_CODE_ERROR.NOT_FOUND_ERROR,
+                message: 'template.question.error.notFound',
             });
         } else if (!checkTags) {
             throw new NotFoundException({
@@ -308,19 +294,45 @@ export class TemplateUserController {
             });
         }
 
+        const session: ClientSession =
+            await this.databaseConnection.startSession();
+        session.startTransaction();
+
         try {
             await this.templateService.update(template, {
                 title,
                 description,
                 isPublic,
-                forms,
-                questions,
-                sharedUsers,
-                tags,
-                topic,
+                forms: uniqueFormsIds,
+                questions: uniqueQuestionsIds,
+                sharedUsers: uniqueSharedUsersIds,
+                tags: uniqueTagsIds,
+                topic: uniqueTopic,
             });
+
+            await this.templateQuestionService.selfDeleteMany({
+                _id: { $nin: uniqueQuestionsIds },
+                template: template._id,
+            });
+
+            // await this.templateFormService.selfDeleteMany({
+            //     _id: { $nin: uniqueFormsIds },
+            //     template: template._id,
+            // });
+            //
+            // await this.templateTagService.selfDeleteMany({
+            //     _id: { $nin: uniqueTagsIds },
+            //     template: template._id,
+            // });
+
+            await session.commitTransaction();
+            await session.endSession();
+
             return;
         } catch (err: any) {
+            await session.abortTransaction();
+            await session.endSession();
+
             throw new InternalServerErrorException({
                 statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
                 message: 'http.serverError.internalServerError',
@@ -464,10 +476,19 @@ export class TemplateUserController {
         )
         template: TemplateDoc,
         @Body()
-        { ids: owners }: TemplateUpdateManyIdsRequestDto
+        { ids: users }: TemplateUpdateManyIdsRequestDto
     ): Promise<void> {
+        const checkedSharedUsers = await this.userService.existsByIds(users);
+
+        if (!checkedSharedUsers) {
+            throw new NotFoundException({
+                statusCode: 404,
+                message: 'checkedSharedUsers',
+            });
+        }
+
         try {
-            await this.templateService.shared(template, owners);
+            await this.templateService.shared(template, users);
             return;
         } catch (err: any) {
             throw new InternalServerErrorException({
@@ -538,12 +559,30 @@ export class TemplateUserController {
         { ids }: TemplateUpdateManyIdsRequestDto,
         @User() user: UserDoc
     ): Promise<void> {
+        const findDeleteCriteria = {
+            template: { $in: ids },
+        };
+
         const session: ClientSession =
             await this.databaseConnection.startSession();
         session.startTransaction();
         try {
             await this.templateService.selfDeleteMany(ids, [user._id]);
-            // TODO add self delete template deps
+            await this.templateQuestionService.selfDeleteMany(
+                findDeleteCriteria
+            );
+
+            // await this.templateFormService.selfDeleteMany(findDeleteCriteria, {
+            //     session,
+            // });
+            //
+            // await this.templateCommentService.selfDeleteMany(
+            //     findDeleteCriteria,
+            //     {
+            //         session,
+            //     }
+            // );
+
             await session.commitTransaction();
             await session.endSession();
 
@@ -583,6 +622,10 @@ export class TemplateUserController {
         )
         template: TemplateDoc
     ): Promise<void> {
+        const findDeleteCriteria = {
+            template: { $in: template },
+        };
+
         const session: ClientSession =
             await this.databaseConnection.startSession();
         session.startTransaction();
@@ -592,7 +635,23 @@ export class TemplateUserController {
                 session,
             });
 
-            // TODO add self delete template deps
+            await this.templateQuestionService.selfDeleteMany(
+                findDeleteCriteria,
+                {
+                    session,
+                }
+            );
+
+            // await this.templateFormService.selfDeleteMany(findDeleteCriteria, {
+            //     session,
+            // });
+            //
+            // await this.templateCommentService.selfDeleteMany(
+            //     findDeleteCriteria,
+            //     {
+            //         session,
+            //     }
+            // );
 
             await session.commitTransaction();
             await session.endSession();

@@ -33,17 +33,12 @@ import {
     IResponsePaging,
 } from '../../../common/response/interfaces/response.interface';
 import { TemplateDoc } from '../repository/entities/template.entity';
-import { TemplateAccessPipe } from '../pipes/template.access.pipe';
-import { DatabaseIdResponseDto } from '../../../common/database/dtos/response/database.id.response.dto';
-import { ENUM_APP_STATUS_CODE_ERROR } from '../../../app/constants/app.status-code.constant';
-import { TemplateCreateRequestDto } from '../dtos/request/template.create.request.dto';
 import { TemplateCommentService } from '../services/template-comment.service';
 import { TemplateService } from '../services/template.service';
 import { TemplateFormService } from '../services/template-form.service';
 import { TemplateTagService } from '../services/template-tag.service';
 import { TemplateQuestionService } from '../services/template-question.service';
 import { User, UserProtected } from '../../user/decorators/user.decorator';
-import { UserDoc } from '../../user/repository/entities/user.entity';
 import { UserService } from '../../user/services/user.service';
 import { TemplateGetResponseDto } from '../dtos/response/template.get.response.dto';
 import { ITemplateDoc } from '../interfaces/template.interface';
@@ -53,14 +48,9 @@ import { PaginationListDto } from '../../../common/pagination/dtos/pagination.li
 import {
     TEMPLATE_DEFAULT_PUBLIC_AVAILABLE_ORDER_BY,
     TEMPLATE_DEFAULT_PUBLIC_ORDER_BY,
-    TEMPLATE_DEFAULT_USER_AVAILABLE_ORDER_BY,
-    TEMPLATE_DEFAULT_USER_AVAILABLE_SEARCH,
-    TEMPLATE_DEFAULT_USER_ORDER_BY,
 } from '../constants/template.list.constant';
 import { PaginationService } from '../../../common/pagination/services/pagination.service';
 import { TemplateListResponseDto } from '../dtos/response/template.list.response.dto';
-import { TemplateUpdateManyIdsRequestDto } from '../dtos/request/template-many-ids.update.request.dto';
-import { TemplateSharedManyRequestDto } from '../dtos/request/template-shared-many.update.request.dto';
 import { TemplatePublicPipe } from '../pipes/template.public.pipe';
 
 @ApiTags('modules.public.template')
