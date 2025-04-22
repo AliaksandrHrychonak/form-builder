@@ -8,7 +8,9 @@ import {
     MinLength,
     IsUUID,
     IsOptional,
+    IsArray,
 } from 'class-validator';
+import { ENUM_TEMPLATE_TOPIC } from '../../constants/template.enum.constant';
 
 export class TemplateCreateRequestDto {
     @ApiProperty({
@@ -38,13 +40,14 @@ export class TemplateCreateRequestDto {
     description: string;
 
     @ApiProperty({
-        example: faker.word.noun(),
+        example: [ENUM_TEMPLATE_TOPIC.APPLICATION, ENUM_TEMPLATE_TOPIC.QUIZ],
         required: false,
     })
-    @IsNotEmpty()
-    @IsString()
+    @IsArray()
     @IsOptional()
-    topic?: string;
+    @IsNotEmpty({ each: true })
+    @Type(() => String)
+    topic?: string[];
 
     @ApiProperty({
         example: true,
@@ -53,30 +56,6 @@ export class TemplateCreateRequestDto {
     @IsNotEmpty()
     @Type(() => Boolean)
     isPublic: boolean;
-
-    @ApiProperty({
-        example: [faker.string.uuid()],
-        required: true,
-    })
-    @IsNotEmpty()
-    @IsUUID('4', { each: true })
-    tags: string[];
-
-    @ApiProperty({
-        example: [faker.string.uuid()],
-        required: true,
-    })
-    @IsNotEmpty()
-    @IsUUID('4', { each: true })
-    questions: string[];
-
-    @ApiProperty({
-        example: [faker.string.uuid()],
-        required: true,
-    })
-    @IsNotEmpty()
-    @IsUUID('4', { each: true })
-    forms: string[];
 
     @ApiProperty({
         example: [faker.string.uuid()],

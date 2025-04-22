@@ -17,12 +17,11 @@ import { ENUM_TEMPLATE_QUESTION_TYPE } from '../../constants/template-question.e
 
 class ValidationObject {
     @ApiProperty({
-        example: faker.number.int({ min: 1, max: 10 }),
+        example: faker.number.int({ min: 0, max: 10 }),
         required: false,
     })
     @IsOptional()
     @IsInt()
-    @Min(0)
     min?: number;
 
     @ApiProperty({
@@ -74,13 +73,9 @@ export class TemplateQuestionCreateRequestDto {
     description?: string;
 
     @ApiProperty({
-        example: faker.helpers.arrayElement([
-            'SINGLE_CHOICE',
-            'MULTIPLE_CHOICE',
-        ]),
+        example: faker.helpers.arrayElement(['NUMBER']),
         required: true,
         enum: ENUM_TEMPLATE_QUESTION_TYPE,
-        description: `The question type. Must be one of ${Object.values(ENUM_TEMPLATE_QUESTION_TYPE)} values.`,
     })
     @IsString()
     @IsEnum(ENUM_TEMPLATE_QUESTION_TYPE)
