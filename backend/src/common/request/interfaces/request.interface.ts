@@ -5,9 +5,11 @@ export interface IRequestApp<
     T = Record<string, any>,
     N = Record<string, any>,
     B = Record<string, any>,
+    C = Record<string, any>,
 > extends Request {
     apiKey?: B;
     user?: T;
+    template?: C;
     __user?: N;
 
     __language: string;

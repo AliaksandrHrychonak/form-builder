@@ -15,6 +15,7 @@ import {
     IHelperDateBackwardOptions,
     IHelperDateRoundDownOptions,
 } from 'src/common/helper/interfaces/helper.interface';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class HelperDateService implements IHelperDateService {
@@ -300,5 +301,13 @@ export class HelperDateService implements IHelperDateService {
         }
 
         return mDate.toDate();
+    }
+
+    getTimestamp(date: Date): number {
+        return DateTime.fromJSDate(date).setZone(this.defTz).toMillis();
+    }
+
+    getZone(date: Date): string {
+        return DateTime.fromJSDate(date).setZone(this.defTz).zone.name;
     }
 }

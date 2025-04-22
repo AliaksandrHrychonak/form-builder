@@ -76,4 +76,7 @@ export interface IHelperDateService {
         { hour, minute, second }: IHelperDateSetTimeOptions
     ): Date;
     roundDown(date: Date, options?: IHelperDateRoundDownOptions): Date;
+
+    getZone(date: Date): string;
+    getTimestamp(date: Date): number;
 }

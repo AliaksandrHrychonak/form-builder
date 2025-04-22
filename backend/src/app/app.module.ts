@@ -9,8 +9,8 @@ import { AppMiddlewareModule } from 'src/app/app.middleware.module';
     providers: [],
     imports: [
         // Common
-        AppMiddlewareModule,
         CommonModule,
+        AppMiddlewareModule,
 
         // Jobs
         JobsModule.forRoot(),

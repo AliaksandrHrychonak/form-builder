@@ -14,6 +14,7 @@ import {
     IDatabaseFindOneLockOptions,
     IDatabaseRawFindAllOptions,
     IDatabaseRawGetTotalOptions,
+    IDatabaseUpdateOptions,
 } from 'src/common/database/interfaces/database.interface';
 
 export abstract class DatabaseRepositoryAbstract<Entity = any> {
@@ -123,6 +124,12 @@ export abstract class DatabaseRepositoryAbstract<Entity = any> {
         data: Dto,
         options?: IDatabaseManyOptions<any>
     ): Promise<boolean>;
+
+    // abstract update<T = Entity>(
+    //     find: Record<string, any>,
+    //     data: UpdateQuery<Entity> | UpdateWithAggregationPipeline,
+    //     options?: IDatabaseUpdateOptions
+    // ): Promise<Entity>;
 
     abstract updateManyRaw(
         find: Record<string, any>,

@@ -1,16 +1,16 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import { ENUM_FILE_STATUS_CODE_ERROR } from 'src/common/file/constants/file.status-code.constant';
 import { IMessageValidationImportErrorParam } from 'src/common/message/interfaces/message.interface';
 
-export class FileImportException extends HttpException {
+export class FileImportException extends Error {
+    readonly httpStatus: HttpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+    readonly statusCode: number =
+        ENUM_FILE_STATUS_CODE_ERROR.VALIDATION_DTO_ERROR;
+    readonly errors: IMessageValidationImportErrorParam[];
+
     constructor(errors: IMessageValidationImportErrorParam[]) {
-        super(
-            {
-                statusCode: ENUM_FILE_STATUS_CODE_ERROR.VALIDATION_DTO_ERROR,
-                message: 'file.error.validationDto',
-                errors,
-            },
-            HttpStatus.UNPROCESSABLE_ENTITY
-        );
+        super('file.error.validationDto');
+
+        this.errors = errors;
     }
 }

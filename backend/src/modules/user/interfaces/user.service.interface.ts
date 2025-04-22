@@ -22,6 +22,7 @@ import {
     UserDoc,
     UserEntity,
 } from 'src/modules/user/repository/entities/user.entity';
+import { ClientSession } from 'mongoose';
 
 export interface IUserService {
     findAll(
@@ -73,6 +74,10 @@ export interface IUserService {
     existByEmail(
         email: string,
         options?: IDatabaseExistOptions
+    ): Promise<boolean>;
+    existsByIds(
+        ids: string[],
+        options?: IDatabaseExistOptions<ClientSession>
     ): Promise<boolean>;
     existByMobileNumber(
         mobileNumber: string,
