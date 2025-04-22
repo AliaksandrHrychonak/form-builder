@@ -44,8 +44,8 @@ export default [
         rules: {
             ...rules,
             '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/ban-types': 'off',
+            '@typescript-eslint/no-unused-vars': 'off',
         },
     },
 ];
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="954f5136-f779-5d86-af2e-5fb2ef19ecd6")}catch(e){}}();
-//# debugId=954f5136-f779-5d86-af2e-5fb2ef19ecd6
