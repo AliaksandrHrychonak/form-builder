@@ -27,10 +27,7 @@ export class TemplateAccessGuard implements CanActivate {
             });
         }
 
-        if (
-            !template.isPublic &&
-            (template.owner !== userId || template.sharedUsers.includes(userId))
-        ) {
+        if (template.owner !== userId) {
             throw new ForbiddenException({
                 statusCode: ENUM_TEMPLATE_STATUS_CODE_ERROR.NOT_ACCESS_ERROR,
                 message: 'template.error.notAccessError',
