@@ -16,6 +16,7 @@ import { ClientSession } from 'mongoose';
 import { ITemplateDoc } from './template.interface';
 import { TemplateGetResponseDto } from '../dtos/response/template.get.response.dto';
 import { TemplateListResponseDto } from '../dtos/response/template.list.response.dto';
+import { TemplateUpdateRequestDto } from '../dtos/request/template.update.request.dto';
 
 export interface ITemplateService {
     create(
@@ -23,11 +24,8 @@ export interface ITemplateService {
             title,
             description,
             isPublic,
-            forms,
             owner,
-            questions,
             sharedUsers,
-            tags,
             topic,
         }: TemplateCreateRequestDto,
         options?: IDatabaseCreateOptions
@@ -92,4 +90,14 @@ export interface ITemplateService {
         sharedUsers: string[],
         options?: IDatabaseSaveOptions
     ): Promise<boolean>;
+    updateMany(
+        find: Record<string, any>,
+        data: TemplateUpdateRequestDto,
+        options?: IDatabaseManyOptions
+    ): Promise<boolean>;
+    update(
+        repository: TemplateDoc,
+        data: TemplateUpdateRequestDto,
+        options?: IDatabaseSaveOptions
+    ): Promise<TemplateDoc>;
 }
