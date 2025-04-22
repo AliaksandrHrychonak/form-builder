@@ -8,6 +8,7 @@ import {
     IDatabaseGetTotalOptions,
     IDatabaseManyOptions,
     IDatabaseSaveOptions,
+    IDatabaseUpdateOptions,
 } from 'src/common/database/interfaces/database.interface';
 import { ConfigService } from '@nestjs/config';
 import { TemplateRepository } from 'src/modules/template/repository/repositories/template.repository';
@@ -66,11 +67,8 @@ export class TemplateService implements ITemplateService {
             title,
             description,
             isPublic,
-            forms,
             owner,
-            questions,
             sharedUsers,
-            tags,
             topic,
         }: TemplateCreateRequestDto,
         options?: IDatabaseCreateOptions
@@ -79,11 +77,8 @@ export class TemplateService implements ITemplateService {
         create.title = title;
         create.description = description;
         create.isPublic = isPublic;
-        create.forms = forms;
         create.owner = owner;
-        create.questions = questions;
         create.sharedUsers = sharedUsers;
-        create.tags = tags;
         create.topic = topic;
 
         return this.templateRepository.create<TemplateEntity>(create, options);
@@ -100,9 +95,12 @@ export class TemplateService implements ITemplateService {
         ids: string[],
         options?: IDatabaseExistOptions<ClientSession>
     ): Promise<boolean> {
-        return this.templateRepository.exists({
-            _id: { $in: ids },
-        });
+        return this.templateRepository.exists(
+            {
+                _id: { $in: ids },
+            },
+            options
+        );
     }
 
     async populateUsers(repository: TemplateDoc): Promise<TemplateDoc> {
@@ -211,6 +209,34 @@ export class TemplateService implements ITemplateService {
         repository.topic = topic;
 
         return this.templateRepository.save(repository, options);
+    }
+
+    async updateQuestions(
+        repository: TemplateDoc,
+        questions: string[],
+        options?: IDatabaseSaveOptions
+    ): Promise<TemplateDoc> {
+        repository.questions = questions;
+
+        return this.templateRepository.save(repository, options);
+    }
+
+    async updateForms(
+        repository: TemplateDoc,
+        forms: string[],
+        options?: IDatabaseSaveOptions
+    ): Promise<TemplateDoc> {
+        repository.forms = forms;
+
+        return this.templateRepository.save(repository, options);
+    }
+
+    async updateMany(
+        find: Record<string, any>,
+        data: TemplateUpdateRequestDto,
+        options?: IDatabaseManyOptions
+    ): Promise<boolean> {
+        return this.templateRepository.updateMany(find, data, options);
     }
 
     async public(

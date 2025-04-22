@@ -2,8 +2,8 @@ import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { DatabaseMongoUUIDEntityAbstract } from 'src/common/database/abstracts/mongo/entities/database.mongo.uuid.entity.abstract';
 import { DatabaseEntity } from 'src/common/database/decorators/database.decorator';
-import { TemplateEntity } from 'src/modules/template/repository/entities/template.entity';
 import { ENUM_TEMPLATE_QUESTION_TYPE } from 'src/modules/template/constants/template-question.enum.constant';
+import { TemplateEntity } from './template.entity';
 
 export const TemplateQuestionDatabaseName = 'templatequestions';
 
@@ -36,7 +36,8 @@ export class TemplateQuestionEntity extends DatabaseMongoUUIDEntityAbstract {
 
     @Prop({
         required: true,
-        enum: ENUM_TEMPLATE_QUESTION_TYPE,
+        trim: true,
+        type: String,
     })
     type: string;
 
@@ -56,6 +57,11 @@ export class TemplateQuestionEntity extends DatabaseMongoUUIDEntityAbstract {
 
     @Prop({ required: true })
     order: number;
+
+    @Prop({
+        required: false,
+    })
+    selfDeletion?: boolean;
 }
 
 export const TemplateQuestionSchema = SchemaFactory.createForClass(

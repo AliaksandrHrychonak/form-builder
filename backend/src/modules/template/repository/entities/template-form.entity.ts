@@ -3,7 +3,6 @@ import { Document } from 'mongoose';
 import { DatabaseMongoUUIDEntityAbstract } from 'src/common/database/abstracts/mongo/entities/database.mongo.uuid.entity.abstract';
 import { DatabaseEntity } from 'src/common/database/decorators/database.decorator';
 import { UserEntity } from 'src/modules/user/repository/entities/user.entity';
-import { TemplateEntity } from 'src/modules/template/repository/entities/template.entity';
 
 export const TemplateFormDatabaseName = 'templateforms';
 
@@ -25,6 +24,11 @@ export class TemplateFormEntity extends DatabaseMongoUUIDEntityAbstract {
 
     @Prop({ type: Object, required: true })
     answers: Record<string, any>;
+
+    @Prop({
+        required: false,
+    })
+    selfDeletion?: boolean;
 }
 
 export const TemplateFormSchema =
