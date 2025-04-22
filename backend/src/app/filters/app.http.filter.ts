@@ -110,6 +110,8 @@ export class AppHttpFilter implements ExceptionFilter {
             data,
         };
 
+        console.log(exception);
+
         response
             .setHeader('x-custom-lang', xLanguage)
             .setHeader('x-timestamp', xTimestamp)
