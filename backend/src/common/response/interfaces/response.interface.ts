@@ -44,6 +44,17 @@ export interface IResponsePaging<T> {
     data: T[];
 }
 
+export interface IResponsePagingElasticsearch {
+    totalPage: number;
+    total: number;
+}
+
+export interface IResponseElasticsearch<T> {
+    _metadata?: IResponseMetadata;
+    _pagination: IResponsePagingElasticsearch;
+    data: T[];
+}
+
 export interface IResponseFileExcel {
     data: IFileRows[];
 }
