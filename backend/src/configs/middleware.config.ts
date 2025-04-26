@@ -21,7 +21,7 @@ export default registerAs(
         },
         timeout: ms('30s'), // 30s based on ms module
         cors: {
-            allowMethod: ['GET', 'DELETE', 'PUT', 'PATCH', 'POST'],
+            allowMethod: ['GET', 'DELETE', 'PUT', 'PATCH', 'POST', 'HEAD'],
             allowOrigin: '*', // allow all origin
             // allowOrigin: [/example\.com(\:\d{1,4})?$/], // allow all subdomain, and all port
             // allowOrigin: [/example\.com$/], // allow all subdomain without port

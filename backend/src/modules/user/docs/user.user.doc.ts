@@ -19,7 +19,7 @@ import { UserRefreshResponseDto } from 'src/modules/user/dtos/response/user.refr
 export function UserLoginCredentialDoc(): MethodDecorator {
     return applyDecorators(
         Doc({
-            summary: 'login with email and password',
+            summary: 'register with email and password',
         }),
         DocAuth({ xApiKey: true }),
         DocRequest({
@@ -35,7 +35,7 @@ export function UserLoginCredentialDoc(): MethodDecorator {
 export function UserLoginSocialGoogleDoc(): MethodDecorator {
     return applyDecorators(
         Doc({
-            summary: 'login with social google',
+            summary: 'register with social appleSignin',
         }),
         DocAuth({ xApiKey: true, google: true }),
         DocResponse<UserLoginResponseDto>('user.loginWithSocialGoogle', {
@@ -47,7 +47,7 @@ export function UserLoginSocialGoogleDoc(): MethodDecorator {
 export function UserLoginSocialAppleDoc(): MethodDecorator {
     return applyDecorators(
         Doc({
-            summary: 'login with social apple',
+            summary: 'register with social apple',
         }),
         DocAuth({ xApiKey: true, apple: true }),
         DocResponse<UserLoginResponseDto>('user.loginWithSocialApple', {

@@ -88,7 +88,7 @@ export class HelperEncryptionService implements IHelperEncryptionService {
             });
 
             return true;
-        } catch (err: unknown) {
+        } catch {
             return false;
         }
     }

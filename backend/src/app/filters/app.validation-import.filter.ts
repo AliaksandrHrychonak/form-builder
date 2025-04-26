@@ -1,10 +1,4 @@
-import {
-    ExceptionFilter,
-    Catch,
-    ArgumentsHost,
-    HttpStatus,
-    Logger,
-} from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, Logger } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
@@ -18,19 +12,17 @@ import {
 import { MessageService } from 'src/common/message/services/message.service';
 import { IRequestApp } from 'src/common/request/interfaces/request.interface';
 import { ResponseMetadataDto } from 'src/common/response/dtos/response.dto';
+import { ENUM_MESSAGE_LANGUAGE } from '../../common/message/constants/message.enum.constant';
 
 @Catch(FileImportException)
 export class AppValidationImportFilter implements ExceptionFilter {
-    private readonly debug: boolean;
     private readonly logger = new Logger(AppValidationImportFilter.name);
 
     constructor(
         private readonly messageService: MessageService,
         private readonly configService: ConfigService,
         private readonly helperDateService: HelperDateService
-    ) {
-        this.debug = this.configService.get<boolean>('app.debug');
-    }
+    ) {}
 
     async catch(
         exception: FileImportException,
@@ -40,25 +32,17 @@ export class AppValidationImportFilter implements ExceptionFilter {
         const response: Response = ctx.getResponse<Response>();
         const request: IRequestApp = ctx.getRequest<IRequestApp>();
 
-        if (this.debug) {
-            this.logger.error(exception);
-        }
-
-        // set default
-        const responseException =
-            exception.getResponse() as IAppImportException;
-        const statusHttp: HttpStatus = exception.getStatus();
-        const statusCode = responseException.statusCode;
-
         // metadata
+        const today = this.helperDateService.create();
         const xLanguage: string =
-            request.__language ?? this.messageService.getLanguage();
-        const xTimestamp = this.helperDateService.createTimestamp();
-        const xTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            request.__language ??
+            this.configService.get<ENUM_MESSAGE_LANGUAGE>('message.language');
+        const xTimestamp = this.helperDateService.getTimestamp(today);
+        const xTimezone = this.helperDateService.getZone(today);
         const xVersion =
             request.__version ??
             this.configService.get<string>('app.urlVersion.version');
-        const xRepoVersion = this.configService.get<string>('app.repoVersion');
+        const xRepoVersion = this.configService.get<string>('app.version');
         const metadata: ResponseMetadataDto = {
             language: xLanguage,
             timestamp: xTimestamp,
@@ -69,22 +53,19 @@ export class AppValidationImportFilter implements ExceptionFilter {
         };
 
         // set response
-        const message = this.messageService.setMessage(
-            responseException.message,
-            {
-                customLanguage: xLanguage,
-            }
-        );
+        const message = this.messageService.setMessage(exception.message, {
+            customLanguage: xLanguage,
+        });
         const errors: IMessageValidationImportError[] =
             this.messageService.setValidationImportMessage(
-                responseException.errors as IMessageValidationImportErrorParam[],
+                exception.errors as IMessageValidationImportErrorParam[],
                 {
                     customLanguage: xLanguage,
                 }
             );
 
         const responseBody: IAppImportException = {
-            statusCode,
+            statusCode: exception.statusCode,
             message,
             errors,
             _metadata: metadata,
@@ -96,7 +77,7 @@ export class AppValidationImportFilter implements ExceptionFilter {
             .setHeader('x-timezone', xTimezone)
             .setHeader('x-version', xVersion)
             .setHeader('x-repo-version', xRepoVersion)
-            .status(statusHttp)
+            .status(exception.httpStatus)
             .json(responseBody);
 
         return;

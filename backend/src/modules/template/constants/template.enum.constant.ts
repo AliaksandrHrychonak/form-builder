@@ -1,0 +1,6 @@
+export enum ENUM_TEMPLATE_TOPIC {
+    SURVEY = 'SURVEY',
+    QUIZ = 'QUIZ',
+    FEEDBACK = 'FEEDBACK',
+    APPLICATION = 'APPLICATION',
+}

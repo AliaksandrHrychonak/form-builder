@@ -29,7 +29,8 @@
         "Streamable",
         "superadmin",
         "userhistories",
-        "userpasswords"
+        "userpasswords",
+        "templatelikes"
     ],
     "ignorePaths": [
         "node_modules/**", 

@@ -11,6 +11,7 @@ import { AuthModule } from 'src/common/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import configs from 'src/configs';
 import { ApiKeyModule } from 'src/common/api-key/api-key.module';
+import { ElasticsearchModule } from 'src/common/elasticsearch/elasticsearch.module';
 
 @Module({
     controllers: [],
@@ -23,6 +24,7 @@ import { ApiKeyModule } from 'src/common/api-key/api-key.module';
             envFilePath: ['.env'],
             expandVariables: false,
         }),
+        ElasticsearchModule.forRoot(),
         MongooseModule.forRootAsync({
             connectionName: DATABASE_CONNECTION_NAME,
             imports: [DatabaseModule],

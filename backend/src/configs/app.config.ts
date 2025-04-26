@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import { version } from 'package.json';
+import { version } from '../../package.json';
 import {
     ENUM_APP_ENVIRONMENT,
     ENUM_APP_TIMEZONE,
@@ -8,10 +8,10 @@ import {
 export default registerAs(
     'app',
     (): Record<string, any> => ({
-        name: process.env.APP_NAME ?? 'forms-builder',
+        name: process.env.APP_NAME ?? 'form-builder',
         env: process.env.APP_ENV ?? ENUM_APP_ENVIRONMENT.DEVELOPMENT,
         timezone: process.env.APP_TIMEZONE ?? ENUM_APP_TIMEZONE.EUROPE_MINSK,
-        repoVersion: version,
+        version,
         globalPrefix:
             process.env.APP_ENV === ENUM_APP_ENVIRONMENT.PRODUCTION
                 ? ''
@@ -23,11 +23,12 @@ export default registerAs(
             host: process.env.HTTP_HOST ?? 'localhost',
             port: process.env.HTTP_PORT
                 ? Number.parseInt(process.env.HTTP_PORT)
-                : 3000,
+                : 8080,
         },
         urlVersion: {
             enable: process.env.URL_VERSION_ENABLE === 'true',
             prefix: 'v',
             version: process.env.URL_VERSION ?? '1',
         },
-    }));
+    })
+);

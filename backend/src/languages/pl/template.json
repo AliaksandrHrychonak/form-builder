@@ -1,0 +1,31 @@
+{
+  "list": "Lista szablonów pobrana pomyślnie.",
+  "get": "Szczegóły szablonu pobrane pomyślnie.",
+  "create": "Nowy szablon utworzony pomyślnie.",
+  "selfDeleteBulk": "Szablon(y) usunięte pomyślnie.",
+  "error": {
+    "notFound": "Nie znaleziono szablonu.",
+    "notFoundSharedUsers": "Nie znaleziono współdzielonych użytkowników.",
+    "forbiddenAccessError": "Dostęp do szablonu jest zabroniony."
+  },
+  "form": {
+    "list": "Lista formularzy szablonu pobrana pomyślnie.",
+    "get": "Szczegóły formularza szablonu pobrane pomyślnie.",
+    "create": "Nowy formularz szablonu utworzony pomyślnie.",
+    "selfDeleteBulk": "Formularz(e) szablonu usunięte pomyślnie.",
+    "error": {
+      "notFound": "Nie znaleziono formularza(y).",
+      "forbiddenAccessError": "Dostęp do formularza jest zabroniony."
+    }
+  },
+  "questions": {
+    "list": "Lista pytań szablonu pobrana pomyślnie.",
+    "get": "Szczegóły pytania formularza pobrane pomyślnie.",
+    "create": "Nowe pytanie szablonu utworzone pomyślnie.",
+    "selfDeleteBulk": "Pytanie(a) szablonu usunięte pomyślnie.",
+    "error": {
+      "notFound": "Nie znaleziono pytania(ń).",
+      "forbiddenAccessError": "Dostęp do pytania jest zabroniony."
+    }
+  }
+}

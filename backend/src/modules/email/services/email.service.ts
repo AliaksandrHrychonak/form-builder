@@ -34,7 +34,7 @@ export class EmailService implements IEmailService {
             });
 
             return true;
-        } catch (err: unknown) {
+        } catch {
             return false;
         }
     }
@@ -54,7 +54,7 @@ export class EmailService implements IEmailService {
             });
 
             return true;
-        } catch (err: unknown) {
+        } catch {
             return false;
         }
     }

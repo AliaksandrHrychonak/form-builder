@@ -32,6 +32,7 @@ import { UserGetResponseDto } from 'src/modules/user/dtos/response/user.get.resp
 import { UserListResponseDto } from 'src/modules/user/dtos/response/user.list.response.dto';
 import { UserProfileResponseDto } from 'src/modules/user/dtos/response/user.profile.response.dto';
 import { UserSignUpRequestDto } from 'src/modules/user/dtos/request/user.sign-up.request.dto';
+import { ClientSession } from 'mongoose';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -177,6 +178,21 @@ export class UserService implements IUserService {
             },
             { ...options, withDeleted: true }
         );
+    }
+
+    async existsByIds(
+        ids: string[],
+        options?: IDatabaseExistOptions<ClientSession>
+    ): Promise<boolean> {
+        if (ids && ids.length > 0) {
+            return this.userRepository.exists(
+                {
+                    _id: { $in: ids },
+                },
+                options
+            );
+        }
+        return true;
     }
 
     async updatePhoto(

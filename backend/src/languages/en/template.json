@@ -1,0 +1,31 @@
+{
+  "list": "List of templates retrieved successfully.",
+  "get": "Template details fetched successfully.",
+  "create": "New template created successfully.",
+  "selfDeleteBulk": "Template(s) template deleted successfully.",
+  "error": {
+    "notFound": "Template not found.",
+    "notFoundSharedUsers": "Shared user(s) not found.",
+    "forbiddenAccessError": "Access to template is forbidden."
+  },
+  "form": {
+    "list": "List of forms template retrieved successfully.",
+    "get": "Form template details fetched successfully.",
+    "create": "New form template created successfully.",
+    "selfDeleteBulk": "Form(s) template deleted successfully.",
+    "error": {
+      "notFound": "Form(s) not found.",
+      "forbiddenAccessError": "Access to form is forbidden."
+    }
+  },
+  "questions": {
+    "list": "List of questions template retrieved successfully.",
+    "get": "Form question details fetched successfully.",
+    "create": "New question template created successfully.",
+    "selfDeleteBulk": "Question(s) template deleted successfully.",
+    "error": {
+      "notFound": "Question(s) not found.",
+      "forbiddenAccessError": "Access to question is forbidden."
+    }
+  }
+}
