@@ -7,8 +7,9 @@ import { DEFAULT_LOCALE } from '../../config';
 
 export const baseApi = axios.create({
     baseURL: 'http://localhost:8080/api',
-    withCredentials: true,
+    // withCredentials: true,
     headers: {
+        Accept: 'application/json',
         'x-api-key': 'v8VB0yY887lMpTA2VJMV:zeZbtGTugBTn3Qd5UXtSZBwt7gn3bg',
         'Content-Type': 'application/json',
     },
