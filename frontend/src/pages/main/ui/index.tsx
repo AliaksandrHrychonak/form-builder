@@ -5,8 +5,12 @@ import TemplatePublicSearchBar from '@widgets/template-public-search-bar/ui';
 import type { Metadata } from 'next';
 import type { FC, JSX } from 'react';
 
-export const generateMetadataMainPage = async ({ params }: { params: { lang: string } }): Promise<Metadata> =>
-    generateLocalizedMetadata(params, 'main');
+type PageParams = Promise<{ lang: string }>;
+
+export const generateMetadataMainPage = async ({ params }: { params: PageParams }): Promise<Metadata> => {
+    const resolvedParams = await params;
+    return generateLocalizedMetadata(resolvedParams, 'main');
+};
 
 export const MainPage: FC = (): JSX.Element => {
     return (

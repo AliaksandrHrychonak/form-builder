@@ -5,8 +5,7 @@ import { SignUp } from '@widgets/signup/ui';
 import type { Metadata } from 'next';
 import type { FC, JSX } from 'react';
 
-export const generateMetadataSignUpPage = async ({ params }: { params: { lang: string } }): Promise<Metadata> =>
-    generateLocalizedMetadata(params, 'signup');
+type PageParams = Promise<{ lang: string }>;
 
 export const SignUpPage: FC = (): JSX.Element => {
     return (
@@ -17,4 +16,9 @@ export const SignUpPage: FC = (): JSX.Element => {
             </section>
         </main>
     );
+};
+
+export const generateMetadataSignUpPage = async ({ params }: { params: PageParams }): Promise<Metadata> => {
+    const resolvedParams = await params;
+    return generateLocalizedMetadata(resolvedParams, 'signup');
 };
