@@ -6,9 +6,7 @@ import type { IResponse, IViewerProfile, ISession } from '@shared/api';
 import type { UseQueryResult } from '@tanstack/react-query';
 
 export const getUserProfile = async (): Promise<IResponse<IViewerProfile>> => {
-    const response = await baseApi.get('/user/user/profile', {
-        withCredentials: false,
-    });
+    const response = await baseApi.get('/user/user/profile');
 
     return response.data;
 };
