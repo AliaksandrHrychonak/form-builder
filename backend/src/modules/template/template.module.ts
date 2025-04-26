@@ -6,9 +6,12 @@ import { TemplateFormService } from 'src/modules/template/services/template-form
 import { TemplateLikeService } from 'src/modules/template/services/template-like.service';
 import { TemplateQuestionService } from 'src/modules/template/services/template-question.service';
 import { TemplateTagService } from 'src/modules/template/services/template-tag.service';
+import { TemplateSearchService } from './services/template-search.service';
+import { ElasticsearchModule } from '../../common/elasticsearch/elasticsearch.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
-    imports: [TemplateRepositoryModule],
+    imports: [TemplateRepositoryModule, ElasticsearchModule, UserModule],
     exports: [
         TemplateService,
         TemplateCommentService,
@@ -16,6 +19,7 @@ import { TemplateTagService } from 'src/modules/template/services/template-tag.s
         TemplateLikeService,
         TemplateQuestionService,
         TemplateTagService,
+        TemplateSearchService,
     ],
     providers: [
         TemplateService,
@@ -24,6 +28,7 @@ import { TemplateTagService } from 'src/modules/template/services/template-tag.s
         TemplateLikeService,
         TemplateQuestionService,
         TemplateTagService,
+        TemplateSearchService,
     ],
     controllers: [],
 })
