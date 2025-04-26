@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { withAuth } from 'next-auth/middleware';
 
-import { ENUM_POLICY_ROLE_TYPE } from '@shared/api';
 import { DEFAULT_LOCALE, locales } from '@shared/config';
 import { handleLocaleRedirection } from '@shared/lib';
 
@@ -26,18 +25,18 @@ export default withAuth(
             secure: process.env.NODE_ENV === 'production',
         });
 
-        const token = request.nextauth.token;
-
-        if (!token) {
-            return NextResponse.redirect(new URL('/unauthorized', request.url));
-        }
-
-        if (
-            request.nextUrl.pathname.startsWith('/admin') &&
-            ![ENUM_POLICY_ROLE_TYPE.ADMIN, ENUM_POLICY_ROLE_TYPE.SUPER_ADMIN].includes(token.roleType)
-        ) {
-            return NextResponse.redirect(new URL('/unauthorized', request.url));
-        }
+        // const token = request.nextauth.token;
+        //
+        // if (!token) {
+        //     return NextResponse.redirect(new URL('/', request.url));
+        // }
+        //
+        // if (
+        //     request.nextUrl.pathname.startsWith('/admin') &&
+        //     ![ENUM_POLICY_ROLE_TYPE.ADMIN, ENUM_POLICY_ROLE_TYPE.SUPER_ADMIN].includes(token.roleType)
+        // ) {
+        //     return NextResponse.redirect(new URL('/', request.url));
+        // }
 
         return response;
     },
