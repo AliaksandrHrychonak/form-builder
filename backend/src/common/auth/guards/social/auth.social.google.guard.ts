@@ -39,7 +39,7 @@ export class AuthSocialGoogleGuard implements CanActivate {
             };
 
             return true;
-        } catch (err: any) {
+        } catch {
             throw new UnauthorizedException({
                 statusCode:
                     ENUM_AUTH_STATUS_CODE_ERROR.AUTH_SOCIAL_GOOGLE_ERROR,

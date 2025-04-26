@@ -145,7 +145,7 @@ export class SettingService implements ISettingService {
             try {
                 JSON.parse(value);
                 return true;
-            } catch (_) {}
+            } catch {}
         }
 
         return false;

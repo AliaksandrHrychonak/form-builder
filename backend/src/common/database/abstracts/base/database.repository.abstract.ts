@@ -1,20 +1,19 @@
 import { UpdateQuery, UpdateWithAggregationPipeline } from 'mongoose';
 import {
+    IDatabaseCreateManyOptions,
     IDatabaseCreateOptions,
     IDatabaseExistOptions,
     IDatabaseFindAllOptions,
-    IDatabaseFindOneOptions,
-    IDatabaseCreateManyOptions,
-    IDatabaseManyOptions,
-    IDatabaseSoftDeleteManyOptions,
-    IDatabaseRestoreManyOptions,
-    IDatabaseRawOptions,
-    IDatabaseGetTotalOptions,
-    IDatabaseSaveOptions,
     IDatabaseFindOneLockOptions,
+    IDatabaseFindOneOptions,
+    IDatabaseGetTotalOptions,
+    IDatabaseManyOptions,
     IDatabaseRawFindAllOptions,
     IDatabaseRawGetTotalOptions,
-    IDatabaseUpdateOptions,
+    IDatabaseRawOptions,
+    IDatabaseRestoreManyOptions,
+    IDatabaseSaveOptions,
+    IDatabaseSoftDeleteManyOptions,
 } from 'src/common/database/interfaces/database.interface';
 
 export abstract class DatabaseRepositoryAbstract<Entity = any> {
