@@ -70,25 +70,15 @@ export class TemplateGetResponseDto extends DatabaseIdResponseDto {
     @Type(() => UserListResponseDto)
     readonly owner: UserListResponseDto;
 
-    @ApiHideProperty()
-    @Exclude()
-    readonly sharedUsers: string[];
+    @ApiProperty({
+        required: true,
+        nullable: false,
+        type: [UserListResponseDto],
+    })
+    @Type(() => UserListResponseDto)
+    readonly sharedUsers: UserListResponseDto[];
 
-    @ApiHideProperty()
-    @Exclude()
-    readonly comments: string[];
-
-    @ApiHideProperty()
-    @Exclude()
-    readonly forms: string[];
-
-    @ApiHideProperty()
-    @Exclude()
-    readonly questions: string[];
-
-    @ApiHideProperty()
-    @Exclude()
-    readonly likes: string[];
+    readonly tags: string[];
 
     @ApiHideProperty()
     @Exclude()
