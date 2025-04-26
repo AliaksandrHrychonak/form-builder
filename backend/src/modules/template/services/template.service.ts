@@ -7,8 +7,6 @@ import {
     IDatabaseFindOneOptions,
     IDatabaseGetTotalOptions,
     IDatabaseManyOptions,
-    IDatabaseSaveOptions,
-    IDatabaseUpdateOptions,
 } from 'src/common/database/interfaces/database.interface';
 import { ConfigService } from '@nestjs/config';
 import { TemplateRepository } from 'src/modules/template/repository/repositories/template.repository';
@@ -17,18 +15,13 @@ import {
     TemplateDoc,
     TemplateEntity,
 } from 'src/modules/template/repository/entities/template.entity';
-import { ClientSession } from 'mongoose';
-import { TemplateQuestionEntity } from '../repository/entities/template-question.entity';
-import { TemplateFormEntity } from '../repository/entities/template-form.entity';
-import { TemplateCommentEntity } from '../repository/entities/template-comment.entity';
-import { TemplateLikeEntity } from '../repository/entities/template-like.entity';
 import { TemplateTagEntity } from '../repository/entities/template-tag.entity';
 import { plainToInstance } from 'class-transformer';
 import { ITemplateDoc } from '../interfaces/template.interface';
 import { TemplateGetResponseDto } from '../dtos/response/template.get.response.dto';
 import { TemplateListResponseDto } from '../dtos/response/template.list.response.dto';
-import { TemplateUpdateRequestDto } from '../dtos/request/template.update.request.dto';
 import { UserEntity } from '../../user/repository/entities/user.entity';
+import { TemplateSearchService } from './template-search.service';
 
 @Injectable()
 export class TemplateService implements ITemplateService {
@@ -36,7 +29,8 @@ export class TemplateService implements ITemplateService {
 
     constructor(
         private readonly templateRepository: TemplateRepository,
-        private readonly configService: ConfigService
+        private readonly configService: ConfigService,
+        private readonly templateSearchService: TemplateSearchService
     ) {
         this.uploadPath = this.configService.get<string>('template.uploadPath');
     }
@@ -81,7 +75,7 @@ export class TemplateService implements ITemplateService {
         create.sharedUsers = sharedUsers;
         create.topic = topic;
 
-        return this.templateRepository.create<TemplateEntity>(create, options);
+        return await this.templateRepository.create(create, options);
     }
 
     async findOneById(
@@ -91,19 +85,14 @@ export class TemplateService implements ITemplateService {
         return this.templateRepository.findOneById<TemplateDoc>(_id, options);
     }
 
-    async existsByIds(
-        ids: string[],
-        options?: IDatabaseExistOptions<ClientSession>
+    async exists(
+        find: Record<string, any>,
+        options?: IDatabaseExistOptions
     ): Promise<boolean> {
-        return this.templateRepository.exists(
-            {
-                _id: { $in: ids },
-            },
-            options
-        );
+        return this.templateRepository.exists(find, options);
     }
 
-    async populateUsers(repository: TemplateDoc): Promise<TemplateDoc> {
+    async joinWithRelations(repository: TemplateDoc): Promise<ITemplateDoc> {
         return repository.populate([
             {
                 path: 'owner',
@@ -114,59 +103,6 @@ export class TemplateService implements ITemplateService {
             {
                 path: 'sharedUsers',
                 localField: 'sharedUsers',
-                foreignField: '_id',
-                model: UserEntity.name,
-            },
-        ]);
-    }
-
-    async populateTemplateDetails(
-        repository: TemplateDoc
-    ): Promise<TemplateDoc> {
-        return repository.populate([
-            {
-                path: 'questions',
-                localField: 'questions',
-                foreignField: '_id',
-                model: TemplateQuestionEntity.name,
-            },
-            {
-                path: 'forms',
-                localField: 'forms',
-                foreignField: '_id',
-                model: TemplateFormEntity.name,
-            },
-        ]);
-    }
-
-    async populateExtraDetails(repository: TemplateDoc): Promise<TemplateDoc> {
-        return repository.populate([
-            {
-                path: 'comments',
-                localField: 'comments',
-                foreignField: '_id',
-                model: TemplateCommentEntity.name,
-            },
-            {
-                path: 'likes',
-                localField: 'likes',
-                foreignField: '_id',
-                model: TemplateLikeEntity.name,
-            },
-            {
-                path: 'tags',
-                localField: 'tags',
-                foreignField: '_id',
-                model: TemplateTagEntity.name,
-            },
-        ]);
-    }
-
-    async joinWithRelations(repository: TemplateDoc): Promise<ITemplateDoc> {
-        return repository.populate([
-            {
-                path: 'owner',
-                localField: 'owner',
                 foreignField: '_id',
                 model: UserEntity.name,
             },
@@ -185,157 +121,12 @@ export class TemplateService implements ITemplateService {
         return plainToInstance(TemplateGetResponseDto, template.toObject());
     }
 
-    async update(
-        repository: TemplateDoc,
-        {
-            title,
-            description,
-            isPublic,
-            forms,
-            questions,
-            sharedUsers,
-            tags,
-            topic,
-        }: TemplateUpdateRequestDto,
-        options?: IDatabaseSaveOptions
-    ): Promise<TemplateDoc> {
-        repository.title = title;
-        repository.description = description;
-        repository.isPublic = isPublic;
-        repository.forms = forms;
-        repository.questions = questions;
-        repository.sharedUsers = sharedUsers;
-        repository.tags = tags;
-        repository.topic = topic;
-
-        return this.templateRepository.save(repository, options);
-    }
-
-    async updateQuestions(
-        repository: TemplateDoc,
-        questions: string[],
-        options?: IDatabaseSaveOptions
-    ): Promise<TemplateDoc> {
-        repository.questions = questions;
-
-        return this.templateRepository.save(repository, options);
-    }
-
-    async updateForms(
-        repository: TemplateDoc,
-        forms: string[],
-        options?: IDatabaseSaveOptions
-    ): Promise<TemplateDoc> {
-        repository.forms = forms;
-
-        return this.templateRepository.save(repository, options);
-    }
-
-    async updateMany(
+    async selfDeleteBulk(
         find: Record<string, any>,
-        data: TemplateUpdateRequestDto,
         options?: IDatabaseManyOptions
     ): Promise<boolean> {
-        return this.templateRepository.updateMany(find, data, options);
-    }
-
-    async public(
-        repository: TemplateDoc,
-        options?: IDatabaseSaveOptions
-    ): Promise<TemplateEntity> {
-        repository.isPublic = true;
-
-        return this.templateRepository.save(repository, options);
-    }
-
-    async publicMany(
-        ids: string[],
-        owners: string[],
-        options?: IDatabaseSaveOptions
-    ): Promise<boolean> {
-        const findCriteria = {
-            owner: { $in: owners },
-            _id: { $in: ids },
-        };
-
-        const data = { isPublic: true };
-
-        return this.templateRepository.updateMany(findCriteria, data, options);
-    }
-
-    async private(
-        repository: TemplateDoc,
-        options?: IDatabaseSaveOptions
-    ): Promise<TemplateEntity> {
-        repository.isPublic = false;
-
-        return this.templateRepository.save(repository, options);
-    }
-
-    async privateMany(
-        ids: string[],
-        owners: string[],
-        options?: IDatabaseSaveOptions
-    ): Promise<boolean> {
-        const findCriteria = {
-            owner: { $in: owners },
-            _id: { $in: ids },
-        };
-
-        const data = { isPublic: false };
-
-        return this.templateRepository.updateMany(findCriteria, data, options);
-    }
-
-    async shared(
-        repository: TemplateDoc,
-        sharedUsers: string[],
-        options?: IDatabaseSaveOptions
-    ): Promise<TemplateEntity> {
-        repository.sharedUsers = sharedUsers;
-
-        return this.templateRepository.save(repository, options);
-    }
-
-    async sharedMany(
-        ids: string[],
-        owners: string[],
-        sharedUsers: string[],
-        options?: IDatabaseSaveOptions
-    ): Promise<boolean> {
-        const findCriteria = {
-            owner: { $in: owners },
-            _id: { $in: ids },
-        };
-
-        return this.templateRepository.updateMany(
-            findCriteria,
-            { sharedUsers },
-            options
-        );
-    }
-
-    async selfDelete(
-        repository: TemplateDoc,
-        options?: IDatabaseSaveOptions
-    ): Promise<TemplateDoc> {
-        repository.selfDeletion = true;
-
-        return this.templateRepository.save(repository, options);
-    }
-
-    async selfDeleteMany(
-        ids: string[],
-        owners: string[],
-        options?: IDatabaseManyOptions
-    ): Promise<boolean> {
-        const findCriteria = {
-            owner: { $in: owners },
-            _id: { $in: ids },
-        };
-
         const data = { selfDeletion: true };
 
-        return this.templateRepository.updateMany(findCriteria, data, options);
+        return this.templateRepository.updateMany(find, data, options);
     }
 }

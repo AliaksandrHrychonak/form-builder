@@ -15,19 +15,10 @@ import {
     TemplateFormDoc,
     TemplateFormEntity,
 } from 'src/modules/template/repository/entities/template-form.entity';
-import { ClientSession } from 'mongoose';
-import {
-    TemplateDoc,
-    TemplateEntity,
-} from '../repository/entities/template.entity';
-import { TemplateListResponseDto } from '../dtos/response/template.list.response.dto';
+import { TemplateEntity } from '../repository/entities/template.entity';
 import { plainToInstance } from 'class-transformer';
 import { TemplateFormListResponseDto } from '../dtos/response/template-form.list.response.dto';
-import { ITemplateDoc } from '../interfaces/template.interface';
 import { UserEntity } from '../../user/repository/entities/user.entity';
-import { TemplateTagEntity } from '../repository/entities/template-tag.entity';
-import { TemplateGetResponseDto } from '../dtos/response/template.get.response.dto';
-import { TemplateUpdateRequestDto } from '../dtos/request/template.update.request.dto';
 import { ITemplateFormDoc } from '../interfaces/template-form.interface';
 import { TemplateFormGetResponseDto } from '../dtos/response/template-form.get.response.dto';
 import { TemplateFormUpdateRequestDto } from '../dtos/request/template-form.update.request.dto';
@@ -60,17 +51,33 @@ export class TemplateFormService implements ITemplateFormService {
         return this.templateFormRepository.findOneById(_id, options);
     }
 
-    async existsByIds(
-        ids: string[],
-        options?: IDatabaseExistOptions<ClientSession>
-    ): Promise<boolean> {
-        if (ids && ids.length > 0) {
-            return this.templateFormRepository.exists({
-                _id: { $in: ids },
-            });
-        }
+    async findOne(
+        find: Record<string, any>,
+        options?: IDatabaseFindOneOptions
+    ): Promise<TemplateFormDoc> {
+        return this.templateFormRepository.findOne(find, options);
+    }
 
-        return true;
+    async findOneWithTemplate(
+        find: Record<string, any>,
+        options?: IDatabaseFindOneOptions
+    ): Promise<ITemplateFormDoc> {
+        return this.templateFormRepository.findOne(find, {
+            ...options,
+            join: {
+                path: 'template',
+                localField: 'template',
+                foreignField: '_id',
+                model: TemplateEntity.name,
+            },
+        });
+    }
+
+    async exists(
+        find: Record<string, any>,
+        options?: IDatabaseExistOptions
+    ): Promise<boolean> {
+        return this.templateFormRepository.exists(find, options);
     }
 
     async findAll(
@@ -100,7 +107,7 @@ export class TemplateFormService implements ITemplateFormService {
     }
 
     async joinWithRelations(
-        repository: TemplateFormDoc
+        repository: ITemplateFormDoc
     ): Promise<ITemplateFormDoc> {
         return repository.populate([
             {
@@ -143,22 +150,12 @@ export class TemplateFormService implements ITemplateFormService {
         return this.templateFormRepository.save(repository, options);
     }
 
-    async selfDeleteMany(
-        ids: string[],
-        owners: string[],
+    async selfDeleteBulk(
+        find: Record<string, any>,
         options?: IDatabaseManyOptions
     ): Promise<boolean> {
-        const findCriteria = {
-            user: { $in: owners },
-            _id: { $in: ids },
-        };
-
         const data = { selfDeletion: true };
 
-        return this.templateFormRepository.updateMany(
-            findCriteria,
-            data,
-            options
-        );
+        return this.templateFormRepository.updateMany(find, data, options);
     }
 }

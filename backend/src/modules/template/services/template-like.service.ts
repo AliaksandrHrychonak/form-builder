@@ -6,12 +6,12 @@ import {
     IDatabaseCreateOptions,
     IDatabaseExistOptions,
     IDatabaseFindOneOptions,
+    IDatabaseManyOptions,
 } from 'src/common/database/interfaces/database.interface';
 import {
     TemplateLikeDoc,
     TemplateLikeEntity,
 } from 'src/modules/template/repository/entities/template-like.entity';
-import { ClientSession } from 'mongoose';
 
 @Injectable()
 export class TemplateLikeService implements ITemplateLikeService {
@@ -40,12 +40,19 @@ export class TemplateLikeService implements ITemplateLikeService {
         return await this.templateLikeRepository.findOneById(_id, options);
     }
 
-    async existsByIds(
-        ids: string[],
-        options?: IDatabaseExistOptions<ClientSession>
+    async exists(
+        find: Record<string, any>,
+        options?: IDatabaseExistOptions
     ): Promise<boolean> {
-        return this.templateLikeRepository.exists({
-            _id: { $in: ids },
-        });
+        return this.templateLikeRepository.exists(find, options);
+    }
+
+    async selfDeleteBulk(
+        find: Record<string, any>,
+        options?: IDatabaseManyOptions
+    ): Promise<boolean> {
+        const data = { selfDeletion: true };
+
+        return this.templateLikeRepository.updateMany(find, data, options);
     }
 }

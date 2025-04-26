@@ -4,14 +4,15 @@ import { TemplateCommentRepository } from 'src/modules/template/repository/repos
 import {
     IDatabaseCreateOptions,
     IDatabaseExistOptions,
+    IDatabaseFindAllOptions,
     IDatabaseFindOneOptions,
+    IDatabaseManyOptions,
 } from 'src/common/database/interfaces/database.interface';
 import { TemplateCommentCreateRequestDto } from 'src/modules/template/dtos/request/template-comment.create.request.dto';
 import {
     TemplateCommentDoc,
     TemplateCommentEntity,
 } from 'src/modules/template/repository/entities/template-comment.entity';
-import { ClientSession } from 'mongoose';
 
 @Injectable()
 export class TemplateCommentService implements ITemplateCommentService {
@@ -19,12 +20,22 @@ export class TemplateCommentService implements ITemplateCommentService {
         private readonly templateCommentRepository: TemplateCommentRepository
     ) {}
 
+    async findAll(
+        find?: Record<string, any>,
+        options?: IDatabaseFindAllOptions
+    ): Promise<TemplateCommentDoc[]> {
+        return this.templateCommentRepository.findAll<TemplateCommentDoc>(
+            find,
+            options
+        );
+    }
+
     async create(
-        { comment, user, template }: TemplateCommentCreateRequestDto,
+        { text, user, template }: TemplateCommentCreateRequestDto,
         options?: IDatabaseCreateOptions
     ): Promise<TemplateCommentDoc> {
         const create: TemplateCommentEntity = new TemplateCommentEntity();
-        create.comment = comment;
+        create.text = text;
         create.user = user;
         create.template = template;
 
@@ -41,12 +52,19 @@ export class TemplateCommentService implements ITemplateCommentService {
         return this.templateCommentRepository.findOneById(_id, options);
     }
 
-    async existsByIds(
-        ids: string[],
-        options?: IDatabaseExistOptions<ClientSession>
+    async exists(
+        find: Record<string, any>,
+        options?: IDatabaseExistOptions
     ): Promise<boolean> {
-        return this.templateCommentRepository.exists({
-            _id: { $in: ids },
-        });
+        return this.templateCommentRepository.exists(find, options);
+    }
+
+    async selfDeleteBulk(
+        find: Record<string, any>,
+        options?: IDatabaseManyOptions
+    ): Promise<boolean> {
+        const data = { selfDeletion: true };
+
+        return this.templateCommentRepository.updateMany(find, data, options);
     }
 }

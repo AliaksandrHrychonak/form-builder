@@ -15,7 +15,6 @@ import {
 } from 'src/modules/template/repository/entities/template-question.entity';
 import { TemplateQuestionRepository } from 'src/modules/template/repository/repositories/template-question.repository';
 import { TemplateQuestionCreateRequestDto } from 'src/modules/template/dtos/request/template-question.create.request.dto';
-import { ClientSession } from 'mongoose';
 import { TemplateEntity } from '../repository/entities/template.entity';
 import { plainToInstance } from 'class-transformer';
 import { TemplateQuestionListResponseDto } from '../dtos/response/template-queston.list.response.dto';
@@ -37,6 +36,9 @@ export class TemplateQuestionService implements ITemplateQuestionService {
             order,
             required,
             validation,
+            type,
+            template,
+            user,
         }: TemplateQuestionCreateRequestDto,
         createOptions?: IDatabaseCreateOptions
     ): Promise<TemplateQuestionDoc> {
@@ -48,6 +50,9 @@ export class TemplateQuestionService implements ITemplateQuestionService {
         createEntity.order = order;
         createEntity.required = required;
         createEntity.validation = validation;
+        createEntity.type = type;
+        createEntity.template = template;
+        createEntity.user = user;
 
         return this.templateQuestionRepository.create<TemplateQuestionEntity>(
             createEntity,
@@ -55,24 +60,33 @@ export class TemplateQuestionService implements ITemplateQuestionService {
         );
     }
 
-    async findOneById(
-        _id: string,
+    async findOne(
+        find: Record<string, any>,
         options?: IDatabaseFindOneOptions
     ): Promise<TemplateQuestionDoc> {
-        return await this.templateQuestionRepository.findOneById(_id, options);
+        return await this.templateQuestionRepository.findOne(find, options);
     }
 
-    async existsByIds(
-        ids: string[],
-        options?: IDatabaseExistOptions<ClientSession>
-    ): Promise<boolean> {
-        if (ids && ids.length > 0) {
-            return this.templateQuestionRepository.exists({
-                _id: { $in: ids },
-            });
-        }
+    async findOneWithTemplate(
+        find: Record<string, any>,
+        options?: IDatabaseFindOneOptions
+    ): Promise<ITemplateQuestionDoc> {
+        return await this.templateQuestionRepository.findOne(find, {
+            ...options,
+            join: {
+                path: 'template',
+                localField: 'template',
+                foreignField: '_id',
+                model: TemplateEntity.name,
+            },
+        });
+    }
 
-        return true;
+    async exists(
+        find: Record<string, any>,
+        options?: IDatabaseExistOptions
+    ): Promise<boolean> {
+        return this.templateQuestionRepository.exists(find, options);
     }
 
     async findAll(
@@ -132,6 +146,7 @@ export class TemplateQuestionService implements ITemplateQuestionService {
             required,
             validation,
             type,
+            order,
         }: TemplateQuestionUpdateRequestDto,
         options?: IDatabaseSaveOptions
     ): Promise<TemplateQuestionDoc> {
@@ -140,6 +155,7 @@ export class TemplateQuestionService implements ITemplateQuestionService {
         repository.options = updateOptions;
         repository.required = required;
         repository.validation = validation;
+        repository.order = order;
         repository.type = type;
 
         return this.templateQuestionRepository.save(repository, options);
@@ -154,7 +170,7 @@ export class TemplateQuestionService implements ITemplateQuestionService {
         return this.templateQuestionRepository.save(repository, options);
     }
 
-    async selfDeleteMany(
+    async selfDeleteBulk(
         find: Record<string, any>,
         options?: IDatabaseManyOptions
     ): Promise<boolean> {

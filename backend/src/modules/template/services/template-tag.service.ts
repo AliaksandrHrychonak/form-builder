@@ -5,13 +5,14 @@ import { TemplateTagRepository } from 'src/modules/template/repository/repositor
 import {
     IDatabaseCreateOptions,
     IDatabaseExistOptions,
+    IDatabaseFindAllOptions,
     IDatabaseFindOneOptions,
+    IDatabaseManyOptions,
 } from 'src/common/database/interfaces/database.interface';
 import {
     TemplateTagDoc,
     TemplateTagEntity,
 } from 'src/modules/template/repository/entities/template-tag.entity';
-import { ClientSession } from 'mongoose';
 
 @Injectable()
 export class TemplateTagService implements ITemplateTagService {
@@ -34,6 +35,16 @@ export class TemplateTagService implements ITemplateTagService {
         );
     }
 
+    async findAll(
+        find?: Record<string, any>,
+        options?: IDatabaseFindAllOptions
+    ): Promise<TemplateTagDoc[]> {
+        return this.templateTagRepository.findAll<TemplateTagDoc>(
+            find,
+            options
+        );
+    }
+
     async findOneById(
         _id: string,
         options?: IDatabaseFindOneOptions
@@ -41,16 +52,19 @@ export class TemplateTagService implements ITemplateTagService {
         return await this.templateTagRepository.findOneById(_id, options);
     }
 
-    async existsByIds(
-        ids: string[],
-        options?: IDatabaseExistOptions<ClientSession>
+    async exists(
+        find: Record<string, any>,
+        options?: IDatabaseExistOptions
     ): Promise<boolean> {
-        if (ids && ids.length > 0) {
-            return this.templateTagRepository.exists({
-                _id: { $in: ids },
-            });
-        }
+        return this.templateTagRepository.exists(find, options);
+    }
 
-        return true;
+    async selfDeleteBulk(
+        find: Record<string, any>,
+        options?: IDatabaseManyOptions
+    ): Promise<boolean> {
+        const data = { selfDeletion: true };
+
+        return this.templateTagRepository.updateMany(find, data, options);
     }
 }
