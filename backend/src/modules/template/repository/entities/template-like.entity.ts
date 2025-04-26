@@ -11,7 +11,7 @@ export const TemplateLikeDatabaseName = 'templatelikes';
 export class TemplateLikeEntity extends DatabaseMongoUUIDEntityAbstract {
     @Prop({
         required: true,
-        ref: 'templates',
+        ref: TemplateEntity.name,
         index: true,
     })
     template: string;
@@ -22,6 +22,11 @@ export class TemplateLikeEntity extends DatabaseMongoUUIDEntityAbstract {
         index: true,
     })
     user: string;
+
+    @Prop({
+        required: false,
+    })
+    selfDeletion?: boolean;
 }
 
 export const TemplateLikeSchema =

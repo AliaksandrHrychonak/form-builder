@@ -7,6 +7,7 @@ import {
     TemplateQuestionDoc,
     TemplateQuestionEntity,
 } from 'src/modules/template/repository/entities/template-question.entity';
+import { UserEntity } from '../../../user/repository/entities/user.entity';
 
 @Injectable()
 export class TemplateQuestionRepository extends DatabaseMongoUUIDRepositoryAbstract<
@@ -23,6 +24,12 @@ export class TemplateQuestionRepository extends DatabaseMongoUUIDRepositoryAbstr
                 localField: 'template',
                 foreignField: '_id',
                 model: TemplateEntity.name,
+            },
+            {
+                path: 'users',
+                localField: 'user',
+                foreignField: '_id',
+                model: UserEntity.name,
             },
         ]);
     }

@@ -29,6 +29,11 @@ export class TemplateTagEntity extends DatabaseMongoUUIDEntityAbstract {
     @IsHexColor()
     @Prop({ default: '#000000' })
     color?: string;
+
+    @Prop({
+        required: false,
+    })
+    selfDeletion?: boolean;
 }
 
 export const TemplateTagSchema =

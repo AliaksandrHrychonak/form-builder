@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 import { DatabaseMongoUUIDEntityAbstract } from 'src/common/database/abstracts/mongo/entities/database.mongo.uuid.entity.abstract';
 import { DatabaseEntity } from 'src/common/database/decorators/database.decorator';
 import { UserEntity } from 'src/modules/user/repository/entities/user.entity';
+import { TemplateEntity } from './template.entity';
 
 export const TemplateFormDatabaseName = 'templateforms';
 
@@ -10,7 +11,7 @@ export const TemplateFormDatabaseName = 'templateforms';
 export class TemplateFormEntity extends DatabaseMongoUUIDEntityAbstract {
     @Prop({
         required: true,
-        ref: 'templates',
+        ref: TemplateEntity.name,
         index: true,
     })
     template: string;

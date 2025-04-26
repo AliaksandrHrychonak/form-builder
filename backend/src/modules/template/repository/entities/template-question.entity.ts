@@ -2,8 +2,8 @@ import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { DatabaseMongoUUIDEntityAbstract } from 'src/common/database/abstracts/mongo/entities/database.mongo.uuid.entity.abstract';
 import { DatabaseEntity } from 'src/common/database/decorators/database.decorator';
-import { ENUM_TEMPLATE_QUESTION_TYPE } from 'src/modules/template/constants/template-question.enum.constant';
 import { TemplateEntity } from './template.entity';
+import { UserEntity } from '../../../user/repository/entities/user.entity';
 
 export const TemplateQuestionDatabaseName = 'templatequestions';
 
@@ -11,10 +11,17 @@ export const TemplateQuestionDatabaseName = 'templatequestions';
 export class TemplateQuestionEntity extends DatabaseMongoUUIDEntityAbstract {
     @Prop({
         required: true,
-        ref: 'templates',
+        ref: TemplateEntity.name,
         index: true,
     })
     template: string;
+
+    @Prop({
+        required: true,
+        ref: UserEntity.name,
+        index: true,
+    })
+    user: string;
 
     @Prop({
         required: true,
@@ -67,7 +74,5 @@ export class TemplateQuestionEntity extends DatabaseMongoUUIDEntityAbstract {
 export const TemplateQuestionSchema = SchemaFactory.createForClass(
     TemplateQuestionEntity
 );
-
-TemplateQuestionSchema.index({ templateId: 1, order: 1 });
 
 export type TemplateQuestionDoc = TemplateQuestionEntity & Document;

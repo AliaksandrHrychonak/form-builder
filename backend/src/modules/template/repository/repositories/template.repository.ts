@@ -7,10 +7,6 @@ import {
     TemplateEntity,
 } from 'src/modules/template/repository/entities/template.entity';
 import { UserEntity } from 'src/modules/user/repository/entities/user.entity';
-import { TemplateQuestionEntity } from 'src/modules/template/repository/entities/template-question.entity';
-import { TemplateFormEntity } from 'src/modules/template/repository/entities/template-form.entity';
-import { TemplateCommentEntity } from 'src/modules/template/repository/entities/template-comment.entity';
-import { TemplateLikeEntity } from 'src/modules/template/repository/entities/template-like.entity';
 import { TemplateTagEntity } from 'src/modules/template/repository/entities/template-tag.entity';
 
 @Injectable()
@@ -34,30 +30,6 @@ export class TemplateRepository extends DatabaseMongoUUIDRepositoryAbstract<
                 localField: 'sharedUsers',
                 foreignField: '_id',
                 model: UserEntity.name,
-            },
-            {
-                path: 'questions',
-                localField: 'questions',
-                foreignField: '_id',
-                model: TemplateQuestionEntity.name,
-            },
-            {
-                path: 'forms',
-                localField: 'forms',
-                foreignField: '_id',
-                model: TemplateFormEntity.name,
-            },
-            {
-                path: 'comments',
-                localField: 'comments',
-                foreignField: '_id',
-                model: TemplateCommentEntity.name,
-            },
-            {
-                path: 'likes',
-                localField: 'likes',
-                foreignField: '_id',
-                model: TemplateLikeEntity.name,
             },
             {
                 path: 'tags',

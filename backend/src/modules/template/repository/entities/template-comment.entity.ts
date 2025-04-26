@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 import { DatabaseMongoUUIDEntityAbstract } from 'src/common/database/abstracts/mongo/entities/database.mongo.uuid.entity.abstract';
 import { DatabaseEntity } from 'src/common/database/decorators/database.decorator';
 import { UserEntity } from 'src/modules/user/repository/entities/user.entity';
+import { TemplateEntity } from './template.entity';
 
 export const TemplateCommentDatabaseName = 'templatecomments';
 
@@ -15,11 +16,11 @@ export class TemplateCommentEntity extends DatabaseMongoUUIDEntityAbstract {
         type: String,
         maxlength: 1000,
     })
-    comment: string;
+    text: string;
 
     @Prop({
         required: true,
-        ref: 'templates',
+        ref: TemplateEntity.name,
         index: true,
     })
     template: string;
@@ -30,6 +31,11 @@ export class TemplateCommentEntity extends DatabaseMongoUUIDEntityAbstract {
         index: true,
     })
     user: string;
+
+    @Prop({
+        required: false,
+    })
+    selfDeletion?: boolean;
 }
 
 export const TemplateCommentSchema = SchemaFactory.createForClass(
