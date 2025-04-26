@@ -185,9 +185,12 @@ export class UserService implements IUserService {
         options?: IDatabaseExistOptions<ClientSession>
     ): Promise<boolean> {
         if (ids && ids.length > 0) {
-            return this.userRepository.exists({
-                _id: { $in: ids },
-            });
+            return this.userRepository.exists(
+                {
+                    _id: { $in: ids },
+                },
+                options
+            );
         }
         return true;
     }
