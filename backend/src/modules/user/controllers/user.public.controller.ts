@@ -22,8 +22,6 @@ import { UserSignUpRequestDto } from 'src/modules/user/dtos/request/user.sign-up
 import { UserHistoryService } from 'src/modules/user/services/user-history.service';
 import { UserPasswordService } from 'src/modules/user/services/user-password.service';
 import { UserService } from 'src/modules/user/services/user.service';
-import { User } from '../decorators/user.decorator';
-import { UserDoc } from '../repository/entities/user.entity';
 
 @ApiTags('modules.public.user')
 @Controller({
@@ -96,7 +94,7 @@ export class UserPublicController {
             });
             await this.userPasswordService.createByUser(user, { session });
 
-            const a = await this.emailService.sendSignUp({
+            await this.emailService.sendSignUp({
                 email,
                 name:
                     firstName && lastName ? `${firstName} ${lastName}` : email,
