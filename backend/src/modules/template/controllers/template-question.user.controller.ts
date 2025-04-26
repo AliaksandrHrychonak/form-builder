@@ -11,9 +11,7 @@ import {
     Post,
 } from '@nestjs/common';
 import { DatabaseConnection } from '../../../common/database/decorators/database.decorator';
-import { TemplateService } from '../services/template.service';
 import { TemplateQuestionService } from '../services/template-question.service';
-import { UserService } from '../../user/services/user.service';
 import { PaginationService } from '../../../common/pagination/services/pagination.service';
 import {
     Response,
@@ -33,7 +31,7 @@ import { AuthJwtAccessProtected } from '../../../common/auth/decorators/auth.jwt
 import { ApiKeyPublicProtected } from '../../../common/api-key/decorators/api-key.decorator';
 import { PaginationQuery } from '../../../common/pagination/decorators/pagination.decorator';
 import { PaginationListDto } from '../../../common/pagination/dtos/pagination.list.dto';
-import { UserDoc } from '../../user/repository/entities/user.entity';
+
 import {
     IResponse,
     IResponsePaging,
@@ -41,10 +39,9 @@ import {
 import { TemplateDoc } from '../repository/entities/template.entity';
 import { RequestRequiredPipe } from '../../../common/request/pipes/request.required.pipe';
 import { TemplateParsePipe } from '../pipes/template.parse.pipe';
-import { TemplateAccessPipe } from '../pipes/template.access.pipe';
+import { TemplateAccessOwnerPipe } from '../pipes/template.access-owner.pipe';
 import { DatabaseIdResponseDto } from '../../../common/database/dtos/response/database.id.response.dto';
 import { ENUM_APP_STATUS_CODE_ERROR } from '../../../app/constants/app.status-code.constant';
-import { TemplateUpdateManyIdsRequestDto } from '../dtos/request/template-many-ids.update.request.dto';
 import {
     TEMPLATE_QUESTION_DEFAULT_USER_AVAILABLE_ORDER_BY,
     TEMPLATE_QUESTION_DEFAULT_USER_AVAILABLE_SEARCH,
@@ -55,10 +52,13 @@ import { ITemplateQuestionDoc } from '../interfaces/template-question.interface'
 import { TemplateQuestionGetResponseDto } from '../dtos/response/template-question.get.response.dto';
 import { TemplateQuestionListResponseDto } from '../dtos/response/template-queston.list.response.dto';
 import { TemplateQuestionParsePipe } from '../pipes/template-question.parse.pipe';
-import { TemplateQuestionAccessPipe } from '../pipes/template-question.access.pipe';
 import { TemplateQuestionCreateRequestDto } from '../dtos/request/template-question.create.request.dto';
-import { TemplateQuestionUpdateRequestDto } from '../dtos/request/template-question.update.request.dto';
+import { TemplateQuestionBulkDeleteRequestDto } from '../dtos/request/template-question-bulk.delete.request.dto';
 import { ENUM_TEMPLATE_QUESTION_STATUS_CODE_ERROR } from '../constants/template.status-code.constant';
+import { TemplateSearchService } from '../services/template-search.service';
+import { UserDoc } from '../../user/repository/entities/user.entity';
+import { TemplateAccessSharedPipe } from '../pipes/template.access-shared.pipe';
+import { TemplateQuestionAccessSharedPipe } from '../pipes/template-question.access-shared.pipe';
 
 @ApiTags('modules.template.user')
 @Controller({
@@ -68,9 +68,8 @@ import { ENUM_TEMPLATE_QUESTION_STATUS_CODE_ERROR } from '../constants/template.
 export class TemplateQuestionUserController {
     constructor(
         @DatabaseConnection() private readonly databaseConnection: Connection,
-        private readonly templateService: TemplateService,
         private readonly templateQuestionService: TemplateQuestionService,
-        private readonly userService: UserService,
+        private readonly templateSearchService: TemplateSearchService,
         private readonly paginationService: PaginationService
     ) {}
 
@@ -89,7 +88,7 @@ export class TemplateQuestionUserController {
             'templateId',
             RequestRequiredPipe,
             TemplateParsePipe,
-            TemplateAccessPipe
+            TemplateAccessSharedPipe
         )
         template: TemplateDoc,
         @PaginationQuery({
@@ -135,22 +134,25 @@ export class TemplateQuestionUserController {
     @UserProtected()
     @AuthJwtAccessProtected()
     @ApiKeyPublicProtected()
-    @Get('/question/get/:questionId')
+    @Get('/:templateId/question/get/:questionId')
     async get(
+        @Param(
+            'templateId',
+            RequestRequiredPipe,
+            TemplateParsePipe,
+            TemplateAccessSharedPipe
+        )
+        template: TemplateDoc,
         @Param(
             'questionId',
             RequestRequiredPipe,
             TemplateQuestionParsePipe,
-            TemplateQuestionAccessPipe
+            TemplateQuestionAccessSharedPipe
         )
-        question: TemplateQuestionDoc
+        question: ITemplateQuestionDoc
     ): Promise<IResponse<TemplateQuestionGetResponseDto>> {
-        const templateWithRelations: ITemplateQuestionDoc =
-            await this.templateQuestionService.joinWithRelations(question);
         const mapped: TemplateQuestionGetResponseDto =
-            await this.templateQuestionService.mapGetTemplateQuestion(
-                templateWithRelations
-            );
+            await this.templateQuestionService.mapGetTemplateQuestion(question);
 
         return { data: mapped };
     }
@@ -170,7 +172,7 @@ export class TemplateQuestionUserController {
             'templateId',
             RequestRequiredPipe,
             TemplateParsePipe,
-            TemplateAccessPipe
+            TemplateAccessOwnerPipe
         )
         template: TemplateDoc,
         @Body()
@@ -182,7 +184,8 @@ export class TemplateQuestionUserController {
             required,
             validation,
             type,
-        }: TemplateQuestionCreateRequestDto
+        }: TemplateQuestionCreateRequestDto,
+        @User() user: UserDoc
     ): Promise<IResponse<DatabaseIdResponseDto>> {
         try {
             const created = await this.templateQuestionService.create({
@@ -194,7 +197,17 @@ export class TemplateQuestionUserController {
                 required,
                 validation,
                 type,
+                user: user._id,
             });
+
+            await this.templateSearchService.addQuestions(template._id, [
+                {
+                    title: created.title,
+                    description: created.description,
+                    _id: created._id,
+                },
+            ]);
+
             return {
                 data: { _id: created._id },
             };
@@ -207,85 +220,7 @@ export class TemplateQuestionUserController {
         }
     }
 
-    @Response('template.question.update')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [ENUM_POLICY_ACTION.READ, ENUM_POLICY_ACTION.UPDATE],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
-    @ApiKeyPublicProtected()
-    @Patch('/question/update/:questionId')
-    async update(
-        @Param(
-            'questionId',
-            RequestRequiredPipe,
-            TemplateQuestionParsePipe,
-            TemplateQuestionAccessPipe
-        )
-        question: TemplateQuestionDoc,
-        @Body()
-        {
-            title,
-            description,
-            options,
-            required,
-            validation,
-            type,
-        }: TemplateQuestionUpdateRequestDto
-    ): Promise<void> {
-        try {
-            await this.templateQuestionService.update(question, {
-                title,
-                description,
-                options,
-                required,
-                validation,
-                type,
-            });
-            return;
-        } catch (err: any) {
-            throw new InternalServerErrorException({
-                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-                message: 'http.serverError.internalServerError',
-                _error: err.message,
-            });
-        }
-    }
-
-    // @Response('template.question.reorder')
-    // @PolicyAbilityProtected({
-    //     subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-    //     action: [ENUM_POLICY_ACTION.READ, ENUM_POLICY_ACTION.UPDATE],
-    // })
-    // @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    // @UserProtected()
-    // @AuthJwtAccessProtected()
-    // @ApiKeyPublicProtected()
-    // @Patch('/:templateId/question/update/:questionId/reorder')
-    // async public(
-    //     @Param(
-    //         'templateId',
-    //         RequestRequiredPipe,
-    //         TemplateParsePipe,
-    //         TemplateAccessPipe
-    //     )
-    //     template: TemplateDoc
-    // ): Promise<void> {
-    //     try {
-    //         await this.templateQuestionService.reorder(template);
-    //         return;
-    //     } catch (err: any) {
-    //         throw new InternalServerErrorException({
-    //             statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-    //             message: 'http.serverError.internalServerError',
-    //             _error: err.message,
-    //         });
-    //     }
-    // }
-
-    @Response('template.question.selfDeleteMany')
+    @Response('template.question.selfDeleteBulk')
     @PolicyAbilityProtected({
         subject: ENUM_POLICY_SUBJECT.TEMPLATE,
         action: [
@@ -298,108 +233,50 @@ export class TemplateQuestionUserController {
     @UserProtected()
     @AuthJwtAccessProtected()
     @ApiKeyPublicProtected()
-    @Patch('/:templateId/question/delete/many')
-    async deleteMany(
+    @Patch('/:templateId/question/delete/bulk')
+    async deleteBulk(
         @Param(
             'templateId',
             RequestRequiredPipe,
             TemplateParsePipe,
-            TemplateAccessPipe
+            TemplateAccessOwnerPipe
         )
         template: TemplateDoc,
         @Body()
-        { ids }: TemplateUpdateManyIdsRequestDto,
-        @User() user: UserDoc
+        { ids }: TemplateQuestionBulkDeleteRequestDto
     ): Promise<void> {
         const uniqueQuestionsIds = [...new Set(ids)];
-        const promises: Promise<any>[] = [
-            this.templateQuestionService.existsByIds(uniqueQuestionsIds),
-        ];
 
-        const [checkQuestions] = await Promise.all(promises);
-
-        if (!checkQuestions) {
-            throw new NotFoundException({
-                statusCode:
-                    ENUM_TEMPLATE_QUESTION_STATUS_CODE_ERROR.NOT_FOUND_ERROR,
-                message: 'template.question.error.notFound',
-            });
-        }
-
-        const findDeleteCriteria = {
-            _id: { $in: uniqueQuestionsIds },
+        const findCriteria: Record<string, any> = {
+            _id: { $in: ids },
+            template: template._id,
         };
 
         const session: ClientSession =
             await this.databaseConnection.startSession();
         session.startTransaction();
         try {
-            await this.templateQuestionService.selfDeleteMany(
-                findDeleteCriteria
-            );
-
-            // TODO delete ids drom template
-
-            await session.commitTransaction();
-            await session.endSession();
-
-            return;
-        } catch (err: any) {
-            await session.abortTransaction();
-            await session.endSession();
-
-            throw new InternalServerErrorException({
-                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-                message: 'http.serverError.internalServerError',
-                _error: err.message,
-            });
-        }
-    }
-
-    @Response('template.question.selfDelete')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [
-            ENUM_POLICY_ACTION.DELETE,
-            ENUM_POLICY_ACTION.UPDATE,
-            ENUM_POLICY_ACTION.READ,
-        ],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
-    @ApiKeyPublicProtected()
-    @Patch('/:templateId/question/delete/:questionId')
-    async delete(
-        @Param(
-            'templateId',
-            RequestRequiredPipe,
-            TemplateParsePipe,
-            TemplateAccessPipe
-        )
-        template: TemplateDoc,
-        @Param(
-            'questionId',
-            RequestRequiredPipe,
-            TemplateQuestionParsePipe,
-            TemplateQuestionAccessPipe
-        )
-        question: TemplateQuestionDoc
-    ): Promise<void> {
-        const newQuestions: string[] = template.questions.filter(
-            q => q !== question._id
-        );
-
-        const session: ClientSession =
-            await this.databaseConnection.startSession();
-        session.startTransaction();
-
-        try {
-            await this.templateService.updateQuestions(template, newQuestions, {
+            const exist = await this.templateQuestionService.exists({
+                findCriteria,
                 session,
             });
 
-            await this.templateQuestionService.selfDelete(question);
+            if (!exist) {
+                throw new NotFoundException({
+                    statusCode:
+                        ENUM_TEMPLATE_QUESTION_STATUS_CODE_ERROR.NOT_FOUND_ERROR,
+                    message: 'template.question.error.notFound',
+                });
+            }
+
+            await this.templateQuestionService.selfDeleteBulk(findCriteria, {
+                session,
+            });
+
+            await this.templateSearchService.removeQuestions(
+                template._id,
+                uniqueQuestionsIds
+            );
 
             await session.commitTransaction();
             await session.endSession();

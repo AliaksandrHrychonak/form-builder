@@ -12,16 +12,13 @@ import {
 } from '@nestjs/common';
 import { DatabaseConnection } from '../../../common/database/decorators/database.decorator';
 import { TemplateService } from '../services/template.service';
-import { TemplateCommentService } from '../services/template-comment.service';
-import { TemplateFormService } from '../services/template-form.service';
-import { TemplateTagService } from '../services/template-tag.service';
 import { TemplateQuestionService } from '../services/template-question.service';
 import { UserService } from '../../user/services/user.service';
-import { PaginationService } from '../../../common/pagination/services/pagination.service';
 import {
     Response,
-    ResponsePaging,
+    ResponseElasticsearch,
 } from '../../../common/response/decorators/response.decorator';
+
 import {
     PolicyAbilityProtected,
     PolicyRoleProtected,
@@ -34,32 +31,36 @@ import {
 import { User, UserProtected } from '../../user/decorators/user.decorator';
 import { AuthJwtAccessProtected } from '../../../common/auth/decorators/auth.jwt.decorator';
 import { ApiKeyPublicProtected } from '../../../common/api-key/decorators/api-key.decorator';
-import { PaginationQuery } from '../../../common/pagination/decorators/pagination.decorator';
 import {
     TEMPLATE_DEFAULT_USER_AVAILABLE_ORDER_BY,
     TEMPLATE_DEFAULT_USER_AVAILABLE_SEARCH,
     TEMPLATE_DEFAULT_USER_ORDER_BY,
 } from '../constants/template.list.constant';
-import { PaginationListDto } from '../../../common/pagination/dtos/pagination.list.dto';
 import { UserDoc } from '../../user/repository/entities/user.entity';
 import {
     IResponse,
-    IResponsePaging,
+    IResponseElasticsearch,
 } from '../../../common/response/interfaces/response.interface';
-import { TemplateListResponseDto } from '../dtos/response/template.list.response.dto';
 import { TemplateDoc } from '../repository/entities/template.entity';
 import { RequestRequiredPipe } from '../../../common/request/pipes/request.required.pipe';
 import { TemplateParsePipe } from '../pipes/template.parse.pipe';
-import { TemplateAccessPipe } from '../pipes/template.access.pipe';
 import { TemplateGetResponseDto } from '../dtos/response/template.get.response.dto';
 import { ITemplateDoc } from '../interfaces/template.interface';
 import { TemplateCreateRequestDto } from '../dtos/request/template.create.request.dto';
 import { DatabaseIdResponseDto } from '../../../common/database/dtos/response/database.id.response.dto';
 import { ENUM_APP_STATUS_CODE_ERROR } from '../../../app/constants/app.status-code.constant';
-import { TemplateUpdateManyIdsRequestDto } from '../dtos/request/template-many-ids.update.request.dto';
-import { TemplateSharedManyRequestDto } from '../dtos/request/template-shared-many.update.request.dto';
-import { TemplateUpdateRequestDto } from '../dtos/request/template.update.request.dto';
-import { ENUM_TEMPLATE_QUESTION_STATUS_CODE_ERROR } from '../constants/template.status-code.constant';
+import { ENUM_TEMPLATE_STATUS_CODE_ERROR } from '../constants/template.status-code.constant';
+import { TemplateBulkDeleteRequestDto } from '../dtos/request/template-bulk.delete.request.dto';
+import { ElasticsearchQuery } from '../../../common/elasticsearch/decorators/elasticsearch.decorator';
+import { ENUM_ELASTICSEARCH_ORDER_DIRECTION_TYPE } from '../../../common/elasticsearch/constants/elasticsearch.enum.constant';
+import { ElasticsearchListDto } from '../../../common/elasticsearch/dtos/elasticsearch.list.dto';
+import { ITemplateSearchDoc } from '../interfaces/template-search.interface';
+import { TemplateSearchService } from '../services/template-search.service';
+import { TemplateFormService } from '../services/template-form.service';
+import { TemplateCommentService } from '../services/template-comment.service';
+import { TemplateLikeService } from '../services/template-like.service';
+import { TemplateTagService } from '../services/template-tag.service';
+import { TemplateAccessSharedPipe } from '../pipes/template.access-shared.pipe';
 
 @ApiTags('modules.template.user')
 @Controller({
@@ -70,15 +71,16 @@ export class TemplateUserController {
     constructor(
         @DatabaseConnection() private readonly databaseConnection: Connection,
         private readonly templateService: TemplateService,
-        private readonly templateCommentService: TemplateCommentService,
-        private readonly templateFormService: TemplateFormService,
-        private readonly templateTagService: TemplateTagService,
         private readonly templateQuestionService: TemplateQuestionService,
-        private readonly userService: UserService,
-        private readonly paginationService: PaginationService
+        private readonly templateFormService: TemplateFormService,
+        private readonly templateSearchService: TemplateSearchService,
+        private readonly templateTagService: TemplateTagService,
+        private readonly templateLikeService: TemplateLikeService,
+        private readonly templateCommentService: TemplateCommentService,
+        private readonly userService: UserService
     ) {}
 
-    @ResponsePaging('template.list')
+    @ResponseElasticsearch('template.list')
     @PolicyAbilityProtected({
         subject: ENUM_POLICY_SUBJECT.TEMPLATE,
         action: [ENUM_POLICY_ACTION.READ],
@@ -89,40 +91,36 @@ export class TemplateUserController {
     @ApiKeyPublicProtected()
     @Get('/list')
     async list(
-        @PaginationQuery({
+        @User() user: UserDoc,
+        @ElasticsearchQuery({
+            searchFields: TEMPLATE_DEFAULT_USER_AVAILABLE_SEARCH,
             defaultOrderBy: TEMPLATE_DEFAULT_USER_ORDER_BY,
+            defaultOrderDirection: ENUM_ELASTICSEARCH_ORDER_DIRECTION_TYPE.DESC,
             availableOrderBy: TEMPLATE_DEFAULT_USER_AVAILABLE_ORDER_BY,
-            availableSearch: TEMPLATE_DEFAULT_USER_AVAILABLE_SEARCH,
         })
-        { _search, _limit, _offset, _order }: PaginationListDto,
-        @User() user: UserDoc
-    ): Promise<IResponsePaging<TemplateListResponseDto>> {
-        const find: Record<string, any> = {
-            ..._search,
-            owner: user._id,
+        { _elasticQuery, _limit, _offset, _order }: ElasticsearchListDto
+    ): Promise<IResponseElasticsearch<ITemplateSearchDoc>> {
+        const filters = {
+            should: [
+                { term: { 'owner._id': user._id } },
+                { term: { 'sharedUsers._id': user._id } },
+                { term: { isPublic: true } },
+            ],
+            minimumShouldMatch: 1,
         };
 
-        const templates: TemplateDoc[] = await this.templateService.findAll(
-            find,
-            {
-                paging: {
-                    limit: _limit,
-                    offset: _offset,
-                },
-                order: _order,
-            }
-        );
-        const total: number = await this.templateService.getTotal(find);
-        const totalPage: number = this.paginationService.totalPage(
-            total,
-            _limit
-        );
-
-        const mapped = await this.templateService.mapList(templates);
+        const { items, total, totalPage } =
+            await this.templateSearchService.search(
+                filters,
+                _elasticQuery,
+                _limit,
+                _offset,
+                _order
+            );
 
         return {
+            data: items,
             _pagination: { total, totalPage },
-            data: mapped,
         };
     }
 
@@ -141,7 +139,7 @@ export class TemplateUserController {
             'templateId',
             RequestRequiredPipe,
             TemplateParsePipe,
-            TemplateAccessPipe
+            TemplateAccessSharedPipe
         )
         template: TemplateDoc
     ): Promise<IResponse<TemplateGetResponseDto>> {
@@ -177,16 +175,14 @@ export class TemplateUserController {
         const uniqueSharedUsersIds = [...new Set(sharedUsers)];
         const uniqueTopic = [...new Set(topic)];
 
-        const promises: Promise<any>[] = [
-            this.userService.existsByIds(uniqueSharedUsersIds),
-        ];
-
-        const [checkUsers] = await Promise.all(promises);
+        const checkUsers =
+            await this.userService.existsByIds(uniqueSharedUsersIds);
 
         if (!checkUsers) {
             throw new NotFoundException({
-                statusCode: 404,
-                message: 'checkUsers',
+                statusCode:
+                    ENUM_TEMPLATE_STATUS_CODE_ERROR.NOT_FOUND_SHARED_USERS_ERROR,
+                message: 'template.error.notFoundSharedUsers',
             });
         }
 
@@ -207,6 +203,13 @@ export class TemplateUserController {
                 { session }
             );
 
+            const createdWithRelations =
+                await this.templateService.joinWithRelations(created);
+
+            await this.templateSearchService.indexTemplate(
+                createdWithRelations
+            );
+
             await session.commitTransaction();
             await session.endSession();
 
@@ -225,322 +228,7 @@ export class TemplateUserController {
         }
     }
 
-    @Response('template.update')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [ENUM_POLICY_ACTION.READ, ENUM_POLICY_ACTION.UPDATE],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
-    @ApiKeyPublicProtected()
-    @Patch('/update/:templateId')
-    async update(
-        @Param(
-            'templateId',
-            RequestRequiredPipe,
-            TemplateParsePipe,
-            TemplateAccessPipe
-        )
-        template: TemplateDoc,
-        @Body()
-        {
-            title,
-            description,
-            isPublic,
-            forms,
-            questions,
-            sharedUsers,
-            tags,
-            topic,
-        }: TemplateUpdateRequestDto
-    ): Promise<void> {
-        const uniqueQuestionsIds = [...new Set(questions)];
-        const uniqueFormsIds = [...new Set(forms)];
-        const uniqueTagsIds = [...new Set(tags)];
-        const uniqueSharedUsersIds = [...new Set(sharedUsers)];
-        const uniqueTopic = [...new Set(topic)];
-
-        const promises: Promise<any>[] = [
-            this.templateFormService.existsByIds(uniqueFormsIds),
-            this.templateQuestionService.existsByIds(uniqueQuestionsIds),
-            this.templateTagService.existsByIds(uniqueTagsIds),
-            this.userService.existsByIds(uniqueSharedUsersIds),
-        ];
-
-        const [checkForms, checkQuestions, checkTags, checkUsers] =
-            await Promise.all(promises);
-
-        if (!checkForms) {
-            throw new NotFoundException({
-                statusCode: 404,
-                message: 'checkForms',
-            });
-        } else if (!checkQuestions) {
-            throw new NotFoundException({
-                statusCode:
-                    ENUM_TEMPLATE_QUESTION_STATUS_CODE_ERROR.NOT_FOUND_ERROR,
-                message: 'template.question.error.notFound',
-            });
-        } else if (!checkTags) {
-            throw new NotFoundException({
-                statusCode: 404,
-                message: 'checkTags',
-            });
-        } else if (!checkUsers) {
-            throw new NotFoundException({
-                statusCode: 404,
-                message: 'checkUsers',
-            });
-        }
-
-        const session: ClientSession =
-            await this.databaseConnection.startSession();
-        session.startTransaction();
-
-        try {
-            await this.templateService.update(template, {
-                title,
-                description,
-                isPublic,
-                forms: uniqueFormsIds,
-                questions: uniqueQuestionsIds,
-                sharedUsers: uniqueSharedUsersIds,
-                tags: uniqueTagsIds,
-                topic: uniqueTopic,
-            });
-
-            await this.templateQuestionService.selfDeleteMany({
-                _id: { $nin: uniqueQuestionsIds },
-                template: template._id,
-            });
-
-            // await this.templateFormService.selfDeleteMany({
-            //     _id: { $nin: uniqueFormsIds },
-            //     template: template._id,
-            // });
-            //
-            // await this.templateTagService.selfDeleteMany({
-            //     _id: { $nin: uniqueTagsIds },
-            //     template: template._id,
-            // });
-
-            await session.commitTransaction();
-            await session.endSession();
-
-            return;
-        } catch (err: any) {
-            await session.abortTransaction();
-            await session.endSession();
-
-            throw new InternalServerErrorException({
-                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-                message: 'http.serverError.internalServerError',
-                _error: err.message,
-            });
-        }
-    }
-
-    @Response('template.public')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [ENUM_POLICY_ACTION.READ, ENUM_POLICY_ACTION.UPDATE],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
-    @ApiKeyPublicProtected()
-    @Patch('/update/:templateId/public')
-    async public(
-        @Param(
-            'templateId',
-            RequestRequiredPipe,
-            TemplateParsePipe,
-            TemplateAccessPipe
-        )
-        template: TemplateDoc
-    ): Promise<void> {
-        try {
-            await this.templateService.public(template);
-            return;
-        } catch (err: any) {
-            throw new InternalServerErrorException({
-                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-                message: 'http.serverError.internalServerError',
-                _error: err.message,
-            });
-        }
-    }
-
-    @Response('template.publicMany')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [ENUM_POLICY_ACTION.READ, ENUM_POLICY_ACTION.UPDATE],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
-    @ApiKeyPublicProtected()
-    @Patch('/update/many/public')
-    async publicMany(
-        @Body()
-        { ids }: TemplateUpdateManyIdsRequestDto,
-        @User() user: UserDoc
-    ): Promise<void> {
-        try {
-            await this.templateService.publicMany(ids, [user._id]);
-            return;
-        } catch (err: any) {
-            throw new InternalServerErrorException({
-                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-                message: 'http.serverError.internalServerError',
-                _error: err.message,
-            });
-        }
-    }
-
-    @Response('template.private')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [ENUM_POLICY_ACTION.READ, ENUM_POLICY_ACTION.UPDATE],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
-    @ApiKeyPublicProtected()
-    @Patch('/update/:templateId/private')
-    async private(
-        @Param(
-            'templateId',
-            RequestRequiredPipe,
-            TemplateParsePipe,
-            TemplateAccessPipe
-        )
-        template: TemplateDoc
-    ): Promise<void> {
-        try {
-            await this.templateService.private(template);
-            return;
-        } catch (err: any) {
-            throw new InternalServerErrorException({
-                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-                message: 'http.serverError.internalServerError',
-                _error: err.message,
-            });
-        }
-    }
-
-    @Response('template.privateMany')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [ENUM_POLICY_ACTION.READ, ENUM_POLICY_ACTION.UPDATE],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
-    @ApiKeyPublicProtected()
-    @Patch('/update/many/private')
-    async privateMany(
-        @Body()
-        { ids }: TemplateUpdateManyIdsRequestDto,
-        @User() user: UserDoc
-    ): Promise<void> {
-        try {
-            await this.templateService.privateMany(ids, [user._id]);
-            return;
-        } catch (err: any) {
-            throw new InternalServerErrorException({
-                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-                message: 'http.serverError.internalServerError',
-                _error: err.message,
-            });
-        }
-    }
-
-    @Response('template.shared')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [ENUM_POLICY_ACTION.READ, ENUM_POLICY_ACTION.UPDATE],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
-    @ApiKeyPublicProtected()
-    @Patch('/update/:templateId/shared')
-    async shared(
-        @Param(
-            'templateId',
-            RequestRequiredPipe,
-            TemplateParsePipe,
-            TemplateAccessPipe
-        )
-        template: TemplateDoc,
-        @Body()
-        { ids: users }: TemplateUpdateManyIdsRequestDto
-    ): Promise<void> {
-        const checkedSharedUsers = await this.userService.existsByIds(users);
-
-        if (!checkedSharedUsers) {
-            throw new NotFoundException({
-                statusCode: 404,
-                message: 'checkedSharedUsers',
-            });
-        }
-
-        try {
-            await this.templateService.shared(template, users);
-            return;
-        } catch (err: any) {
-            throw new InternalServerErrorException({
-                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-                message: 'http.serverError.internalServerError',
-                _error: err.message,
-            });
-        }
-    }
-
-    @Response('template.sharedMany')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [ENUM_POLICY_ACTION.READ, ENUM_POLICY_ACTION.UPDATE],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
-    @ApiKeyPublicProtected()
-    @Patch('/update/many/shared')
-    async sharedMany(
-        @Body()
-        { sharedUsers, templateIds }: TemplateSharedManyRequestDto,
-        @User() user: UserDoc
-    ): Promise<void> {
-        const checkedSharedUsers =
-            await this.userService.existsByIds(sharedUsers);
-
-        if (!checkedSharedUsers) {
-            throw new NotFoundException({
-                statusCode: 404,
-                message: 'checkedSharedUsers',
-            });
-        }
-
-        try {
-            await this.templateService.sharedMany(
-                templateIds,
-                [user._id],
-                sharedUsers
-            );
-            return;
-        } catch (err: any) {
-            throw new InternalServerErrorException({
-                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-                message: 'http.serverError.internalServerError',
-                _error: err.message,
-            });
-        }
-    }
-
-    @Response('template.selfDeleteMany')
+    @Response('template.selfDeleteBulk')
     @PolicyAbilityProtected({
         subject: ENUM_POLICY_SUBJECT.TEMPLATE,
         action: [
@@ -553,105 +241,66 @@ export class TemplateUserController {
     @UserProtected()
     @AuthJwtAccessProtected()
     @ApiKeyPublicProtected()
-    @Patch('/delete/many')
+    @Patch('/delete/bulk')
     async deleteMany(
         @Body()
-        { ids }: TemplateUpdateManyIdsRequestDto,
+        { ids }: TemplateBulkDeleteRequestDto,
         @User() user: UserDoc
     ): Promise<void> {
-        const findDeleteCriteria = {
-            template: { $in: ids },
+        const findTemplateCriteria = {
+            owner: user._id,
+            _id: { $in: ids },
         };
 
-        const session: ClientSession =
-            await this.databaseConnection.startSession();
-        session.startTransaction();
-        try {
-            await this.templateService.selfDeleteMany(ids, [user._id]);
-            await this.templateQuestionService.selfDeleteMany(
-                findDeleteCriteria
-            );
+        const findRelationsDeleteCriteria = {
+            template: { $in: ids },
+            user: user._id,
+        };
 
-            // await this.templateFormService.selfDeleteMany(findDeleteCriteria, {
-            //     session,
-            // });
-            //
-            // await this.templateCommentService.selfDeleteMany(
-            //     findDeleteCriteria,
-            //     {
-            //         session,
-            //     }
-            // );
+        const exist = await this.templateService.exists(findTemplateCriteria);
 
-            await session.commitTransaction();
-            await session.endSession();
-
-            return;
-        } catch (err: any) {
-            await session.abortTransaction();
-            await session.endSession();
-
-            throw new InternalServerErrorException({
-                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-                message: 'http.serverError.internalServerError',
-                _error: err.message,
+        if (!exist) {
+            throw new NotFoundException({
+                statusCode: ENUM_TEMPLATE_STATUS_CODE_ERROR.NOT_FOUND_ERROR,
+                message: 'template.error.notFound',
             });
         }
-    }
-
-    @Response('template.selfDelete')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [
-            ENUM_POLICY_ACTION.DELETE,
-            ENUM_POLICY_ACTION.UPDATE,
-            ENUM_POLICY_ACTION.READ,
-        ],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
-    @ApiKeyPublicProtected()
-    @Patch('/delete/:templateId')
-    async delete(
-        @Param(
-            'templateId',
-            RequestRequiredPipe,
-            TemplateParsePipe,
-            TemplateAccessPipe
-        )
-        template: TemplateDoc
-    ): Promise<void> {
-        const findDeleteCriteria = {
-            template: { $in: template },
-        };
 
         const session: ClientSession =
             await this.databaseConnection.startSession();
         session.startTransaction();
-
         try {
-            await this.templateService.selfDelete(template, {
+            await this.templateService.selfDeleteBulk(findTemplateCriteria, {
                 session,
             });
 
-            await this.templateQuestionService.selfDeleteMany(
-                findDeleteCriteria,
+            await this.templateQuestionService.selfDeleteBulk(
+                findRelationsDeleteCriteria,
+                { session }
+            );
+
+            await this.templateFormService.selfDeleteBulk(
+                findRelationsDeleteCriteria,
                 {
                     session,
                 }
             );
 
-            // await this.templateFormService.selfDeleteMany(findDeleteCriteria, {
-            //     session,
-            // });
-            //
-            // await this.templateCommentService.selfDeleteMany(
-            //     findDeleteCriteria,
-            //     {
-            //         session,
-            //     }
-            // );
+            await this.templateCommentService.selfDeleteBulk(
+                findRelationsDeleteCriteria,
+                {
+                    session,
+                }
+            );
+
+            await this.templateLikeService.selfDeleteBulk(
+                findRelationsDeleteCriteria,
+                {
+                    session,
+                }
+            );
+
+            await this.templateSearchService.deleteTemplates(ids);
 
             await session.commitTransaction();
             await session.endSession();

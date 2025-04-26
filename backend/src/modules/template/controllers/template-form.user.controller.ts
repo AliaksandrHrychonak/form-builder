@@ -11,8 +11,6 @@ import {
     Post,
 } from '@nestjs/common';
 import { DatabaseConnection } from '../../../common/database/decorators/database.decorator';
-import { TemplateService } from '../services/template.service';
-import { UserService } from '../../user/services/user.service';
 import { PaginationService } from '../../../common/pagination/services/pagination.service';
 import {
     Response,
@@ -40,7 +38,7 @@ import {
 import { TemplateDoc } from '../repository/entities/template.entity';
 import { RequestRequiredPipe } from '../../../common/request/pipes/request.required.pipe';
 import { TemplateParsePipe } from '../pipes/template.parse.pipe';
-import { TemplateAccessPipe } from '../pipes/template.access.pipe';
+import { TemplateAccessOwnerPipe } from '../pipes/template.access-owner.pipe';
 import { DatabaseIdResponseDto } from '../../../common/database/dtos/response/database.id.response.dto';
 import { ENUM_APP_STATUS_CODE_ERROR } from '../../../app/constants/app.status-code.constant';
 import {
@@ -51,18 +49,18 @@ import { TemplateFormService } from '../services/template-form.service';
 import { TemplateFormCreateRequestDto } from '../dtos/request/template-form.create.request.dto';
 import { TemplateFormDoc } from '../repository/entities/template-form.entity';
 import { TemplateFormParsePipe } from '../pipes/template-form.parse.pipe';
-import { TemplateFormAccessPipe } from '../pipes/template-form.access.pipe';
 import { TemplateFormGetResponseDto } from '../dtos/response/template-form.get.response.dto';
 import { ITemplateFormDoc } from '../interfaces/template-form.interface';
 import { TemplateFormListResponseDto } from '../dtos/response/template-form.list.response.dto';
-import { TemplateUpdateManyIdsRequestDto } from '../dtos/request/template-many-ids.update.request.dto';
+import { ENUM_TEMPLATE_FORM_STATUS_CODE_ERROR } from '../constants/template.status-code.constant';
+import { TemplateSearchService } from '../services/template-search.service';
 import {
-    ENUM_TEMPLATE_FORM_STATUS_CODE_ERROR,
-    ENUM_TEMPLATE_QUESTION_STATUS_CODE_ERROR,
-} from '../constants/template.status-code.constant';
-import { TemplateQuestionParsePipe } from '../pipes/template-question.parse.pipe';
-import { TemplateQuestionAccessPipe } from '../pipes/template-question.access.pipe';
-import { TemplateQuestionDoc } from '../repository/entities/template-question.entity';
+    TEMPLATE_DEFAULT_POPULARITY_SCORE_DECREMENT,
+    TEMPLATE_DEFAULT_POPULARITY_SCORE_INCREMENT,
+} from '../constants/template-form.constant';
+import { TemplateFormBulkDeleteRequestDto } from '../dtos/request/template-form-bulk.delete.request.dto';
+import { TemplateAccessSharedPipe } from '../pipes/template.access-shared.pipe';
+import { TemplateFormAccessSharedPipe } from '../pipes/template-form.access-shared.pipe';
 
 @ApiTags('modules.template.user')
 @Controller({
@@ -72,10 +70,9 @@ import { TemplateQuestionDoc } from '../repository/entities/template-question.en
 export class TemplateFormUserController {
     constructor(
         @DatabaseConnection() private readonly databaseConnection: Connection,
-        private readonly templateService: TemplateService,
         private readonly templateFormService: TemplateFormService,
-        private readonly userService: UserService,
-        private readonly paginationService: PaginationService
+        private readonly paginationService: PaginationService,
+        private readonly templateSearchService: TemplateSearchService
     ) {}
 
     @ResponsePaging('template.form.list')
@@ -93,7 +90,7 @@ export class TemplateFormUserController {
             'templateId',
             RequestRequiredPipe,
             TemplateParsePipe,
-            TemplateAccessPipe
+            TemplateAccessSharedPipe
         )
         template: TemplateDoc,
         @PaginationQuery({
@@ -145,23 +142,19 @@ export class TemplateFormUserController {
             'templateId',
             RequestRequiredPipe,
             TemplateParsePipe,
-            TemplateAccessPipe
+            TemplateAccessSharedPipe
         )
         template: TemplateDoc,
         @Param(
             'formId',
             RequestRequiredPipe,
             TemplateFormParsePipe,
-            TemplateFormAccessPipe
+            TemplateFormAccessSharedPipe
         )
-        form: TemplateFormDoc
+        form: ITemplateFormDoc
     ): Promise<IResponse<TemplateFormGetResponseDto>> {
-        const templateFormWithRelations: ITemplateFormDoc =
-            await this.templateFormService.joinWithRelations(form);
         const mapped: TemplateFormGetResponseDto =
-            await this.templateFormService.mapGetTemplateForm(
-                templateFormWithRelations
-            );
+            await this.templateFormService.mapGetTemplateForm(form);
 
         return { data: mapped };
     }
@@ -181,7 +174,7 @@ export class TemplateFormUserController {
             'templateId',
             RequestRequiredPipe,
             TemplateParsePipe,
-            TemplateAccessPipe
+            TemplateAccessOwnerPipe
         )
         template: TemplateDoc,
         @Body()
@@ -194,6 +187,12 @@ export class TemplateFormUserController {
                 answers,
                 user: user._id,
             });
+
+            await this.templateSearchService.updatePopularityScore(
+                template._id,
+                TEMPLATE_DEFAULT_POPULARITY_SCORE_INCREMENT
+            );
+
             return {
                 data: { _id: created._id },
             };
@@ -206,7 +205,7 @@ export class TemplateFormUserController {
         }
     }
 
-    @Response('template.form.selfDeleteMany')
+    @Response('template.form.selfDeleteBulk')
     @PolicyAbilityProtected({
         subject: ENUM_POLICY_SUBJECT.TEMPLATE,
         action: [
@@ -219,103 +218,50 @@ export class TemplateFormUserController {
     @UserProtected()
     @AuthJwtAccessProtected()
     @ApiKeyPublicProtected()
-    @Patch('/:templateId/form/delete/many')
-    async deleteMany(
+    @Patch('/:templateId/form/delete/bulk')
+    async deleteBulk(
         @Param(
             'templateId',
             RequestRequiredPipe,
             TemplateParsePipe,
-            TemplateAccessPipe
+            TemplateAccessOwnerPipe
         )
         template: TemplateDoc,
         @Body()
-        { ids }: TemplateUpdateManyIdsRequestDto,
-        @User() user: UserDoc
+        { ids }: TemplateFormBulkDeleteRequestDto
     ): Promise<void> {
         const uniqueFormIds = [...new Set(ids)];
 
-        const promises: Promise<any>[] = [
-            this.templateFormService.existsByIds(uniqueFormIds),
-        ];
-
-        const [checkForms] = await Promise.all(promises);
-
-        if (!checkForms) {
-            throw new NotFoundException({
-                statusCode:
-                    ENUM_TEMPLATE_FORM_STATUS_CODE_ERROR.NOT_FOUND_ERROR,
-                message: 'template.form.error.notFound',
-            });
-        }
+        const findCriteria: Record<string, any> = {
+            _id: { $in: ids },
+            template: template._id,
+        };
 
         const session: ClientSession =
             await this.databaseConnection.startSession();
         session.startTransaction();
         try {
-            await this.templateFormService.selfDeleteMany(uniqueFormIds, [
-                user._id,
-            ]);
-
-            // TODO delete ids drom template
-
-            await session.commitTransaction();
-            await session.endSession();
-
-            return;
-        } catch (err: any) {
-            await session.abortTransaction();
-            await session.endSession();
-
-            throw new InternalServerErrorException({
-                statusCode: ENUM_APP_STATUS_CODE_ERROR.UNKNOWN_ERROR,
-                message: 'http.serverError.internalServerError',
-                _error: err.message,
-            });
-        }
-    }
-
-    @Response('template.form.selfDelete')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [
-            ENUM_POLICY_ACTION.DELETE,
-            ENUM_POLICY_ACTION.UPDATE,
-            ENUM_POLICY_ACTION.READ,
-        ],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
-    @ApiKeyPublicProtected()
-    @Patch('/:templateId/form/delete/:formId')
-    async delete(
-        @Param(
-            'templateId',
-            RequestRequiredPipe,
-            TemplateParsePipe,
-            TemplateAccessPipe
-        )
-        template: TemplateDoc,
-        @Param(
-            'formId',
-            RequestRequiredPipe,
-            TemplateFormParsePipe,
-            TemplateFormAccessPipe
-        )
-        form: TemplateFormDoc
-    ): Promise<void> {
-        const newForms: string[] = template.forms.filter(f => f !== form._id);
-
-        const session: ClientSession =
-            await this.databaseConnection.startSession();
-        session.startTransaction();
-
-        try {
-            await this.templateService.updateForms(template, newForms, {
+            const exist = await this.templateFormService.exists(findCriteria, {
                 session,
             });
 
-            await this.templateFormService.selfDelete(form);
+            if (!exist) {
+                throw new NotFoundException({
+                    statusCode:
+                        ENUM_TEMPLATE_FORM_STATUS_CODE_ERROR.NOT_FOUND_ERROR,
+                    message: 'template.form.error.notFound',
+                });
+            }
+
+            await this.templateFormService.selfDeleteBulk(findCriteria, {
+                session,
+            });
+
+            await this.templateSearchService.updatePopularityScore(
+                template._id,
+                uniqueFormIds.length *
+                    TEMPLATE_DEFAULT_POPULARITY_SCORE_DECREMENT
+            );
 
             await session.commitTransaction();
             await session.endSession();

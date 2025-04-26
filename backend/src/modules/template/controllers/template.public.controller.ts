@@ -1,57 +1,33 @@
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    InternalServerErrorException,
-    NotFoundException,
-    Param,
-    Patch,
-    Post,
-} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ClientSession, Connection } from 'mongoose';
+import { Connection } from 'mongoose';
 import { DatabaseConnection } from 'src/common/database/decorators/database.decorator';
 import {
     Response,
-    ResponsePaging,
+    ResponseElasticsearch,
 } from '../../../common/response/decorators/response.decorator';
-import {
-    PolicyAbilityProtected,
-    PolicyRoleProtected,
-} from '../../../common/policy/decorators/policy.decorator';
-import {
-    ENUM_POLICY_ACTION,
-    ENUM_POLICY_ROLE_TYPE,
-    ENUM_POLICY_SUBJECT,
-} from '../../../common/policy/constants/policy.enum.constant';
-import { AuthJwtAccessProtected } from '../../../common/auth/decorators/auth.jwt.decorator';
 import { ApiKeyPublicProtected } from '../../../common/api-key/decorators/api-key.decorator';
 import { RequestRequiredPipe } from '../../../common/request/pipes/request.required.pipe';
 import {
     IResponse,
-    IResponsePaging,
+    IResponseElasticsearch,
 } from '../../../common/response/interfaces/response.interface';
 import { TemplateDoc } from '../repository/entities/template.entity';
-import { TemplateCommentService } from '../services/template-comment.service';
 import { TemplateService } from '../services/template.service';
-import { TemplateFormService } from '../services/template-form.service';
-import { TemplateTagService } from '../services/template-tag.service';
-import { TemplateQuestionService } from '../services/template-question.service';
-import { User, UserProtected } from '../../user/decorators/user.decorator';
-import { UserService } from '../../user/services/user.service';
 import { TemplateGetResponseDto } from '../dtos/response/template.get.response.dto';
 import { ITemplateDoc } from '../interfaces/template.interface';
 import { TemplateParsePipe } from '../pipes/template.parse.pipe';
-import { PaginationQuery } from '../../../common/pagination/decorators/pagination.decorator';
-import { PaginationListDto } from '../../../common/pagination/dtos/pagination.list.dto';
+import { TemplateAccessPublicPipe } from '../pipes/template.access-public.pipe';
+import { TemplateSearchService } from '../services/template-search.service';
+import { ElasticsearchListDto } from '../../../common/elasticsearch/dtos/elasticsearch.list.dto';
+import { ElasticsearchQuery } from '../../../common/elasticsearch/decorators/elasticsearch.decorator';
+import { ITemplateSearchDoc } from '../interfaces/template-search.interface';
+import { ENUM_ELASTICSEARCH_ORDER_DIRECTION_TYPE } from '../../../common/elasticsearch/constants/elasticsearch.enum.constant';
 import {
     TEMPLATE_DEFAULT_PUBLIC_AVAILABLE_ORDER_BY,
+    TEMPLATE_DEFAULT_PUBLIC_AVAILABLE_SEARCH,
     TEMPLATE_DEFAULT_PUBLIC_ORDER_BY,
 } from '../constants/template.list.constant';
-import { PaginationService } from '../../../common/pagination/services/pagination.service';
-import { TemplateListResponseDto } from '../dtos/response/template.list.response.dto';
-import { TemplatePublicPipe } from '../pipes/template.public.pipe';
 
 @ApiTags('modules.public.template')
 @Controller({
@@ -62,56 +38,40 @@ export class TemplatePublicController {
     constructor(
         @DatabaseConnection() private readonly databaseConnection: Connection,
         private readonly templateService: TemplateService,
-        private readonly templateCommentService: TemplateCommentService,
-        private readonly templateFormService: TemplateFormService,
-        private readonly templateTagService: TemplateTagService,
-        private readonly templateQuestionService: TemplateQuestionService,
-        private readonly userService: UserService,
-        private readonly paginationService: PaginationService
+        private readonly templateSearchService: TemplateSearchService
     ) {}
 
-    @ResponsePaging('template.list')
-    @PolicyAbilityProtected({
-        subject: ENUM_POLICY_SUBJECT.TEMPLATE,
-        action: [ENUM_POLICY_ACTION.READ],
-    })
-    @PolicyRoleProtected(ENUM_POLICY_ROLE_TYPE.USER)
-    @UserProtected()
-    @AuthJwtAccessProtected()
+    @ResponseElasticsearch('template.list')
     @ApiKeyPublicProtected()
     @Get('/list')
     async list(
-        @PaginationQuery({
+        @ElasticsearchQuery({
+            searchFields: TEMPLATE_DEFAULT_PUBLIC_AVAILABLE_SEARCH,
             defaultOrderBy: TEMPLATE_DEFAULT_PUBLIC_ORDER_BY,
+            defaultOrderDirection: ENUM_ELASTICSEARCH_ORDER_DIRECTION_TYPE.DESC,
             availableOrderBy: TEMPLATE_DEFAULT_PUBLIC_AVAILABLE_ORDER_BY,
         })
-        { _search, _limit, _offset, _order }: PaginationListDto
-    ): Promise<IResponsePaging<TemplateListResponseDto>> {
-        const find: Record<string, any> = {
-            ..._search,
+        { _elasticQuery, _limit, _offset, _order }: ElasticsearchListDto
+    ): Promise<IResponseElasticsearch<ITemplateSearchDoc>> {
+        const filters = {
+            filter: [{ term: { isPublic: true } }],
         };
 
-        const templates: TemplateDoc[] = await this.templateService.findAll(
-            find,
-            {
-                paging: {
-                    limit: _limit,
-                    offset: _offset,
-                },
-                order: _order,
-            }
-        );
-        const total: number = await this.templateService.getTotal(find);
-        const totalPage: number = this.paginationService.totalPage(
-            total,
-            _limit
-        );
-
-        const mapped = await this.templateService.mapList(templates);
+        const { items, total, totalPage } =
+            await this.templateSearchService.search(
+                filters,
+                _elasticQuery,
+                _limit,
+                _offset,
+                _order
+            );
 
         return {
-            _pagination: { total, totalPage },
-            data: mapped,
+            data: items,
+            _pagination: {
+                total,
+                totalPage,
+            },
         };
     }
 
@@ -123,7 +83,7 @@ export class TemplatePublicController {
             'templateId',
             RequestRequiredPipe,
             TemplateParsePipe,
-            TemplatePublicPipe
+            TemplateAccessPublicPipe
         )
         template: TemplateDoc
     ): Promise<IResponse<TemplateGetResponseDto>> {
