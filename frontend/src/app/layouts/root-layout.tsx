@@ -9,13 +9,19 @@ import { WithAuthProvider, WithDictionaryProvider, WithQueryClient, WithThemePro
 import type { FC, ReactNode } from 'react';
 
 const geistSans = Geist({
-    variable: '--font-geist-sans',
     subsets: ['latin'],
+    variable: '--font-geist-mono',
+    display: 'swap',
+    preload: true,
+    weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
 });
 
 const geistMono = Geist_Mono({
-    variable: '--font-geist-mono',
     subsets: ['latin'],
+    display: 'swap',
+    variable: '--font-geist-sans',
+    preload: true,
+    weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
 });
 
 interface RootLayoutProps {
