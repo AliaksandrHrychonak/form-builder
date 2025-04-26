@@ -2,13 +2,14 @@ import { faker } from '@faker-js/faker';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
-    IsString,
+    IsArray,
+    IsEnum,
     IsNotEmpty,
+    IsOptional,
+    IsString,
+    IsUUID,
     MaxLength,
     MinLength,
-    IsUUID,
-    IsOptional,
-    IsArray,
 } from 'class-validator';
 import { ENUM_TEMPLATE_TOPIC } from '../../constants/template.enum.constant';
 
@@ -42,12 +43,14 @@ export class TemplateCreateRequestDto {
     @ApiProperty({
         example: [ENUM_TEMPLATE_TOPIC.APPLICATION, ENUM_TEMPLATE_TOPIC.QUIZ],
         required: false,
+        enum: ENUM_TEMPLATE_TOPIC,
+        isArray: true,
     })
     @IsArray()
     @IsOptional()
     @IsNotEmpty({ each: true })
-    @Type(() => String)
-    topic?: string[];
+    @IsEnum(ENUM_TEMPLATE_TOPIC, { each: true })
+    topic?: ENUM_TEMPLATE_TOPIC[];
 
     @ApiProperty({
         example: true,

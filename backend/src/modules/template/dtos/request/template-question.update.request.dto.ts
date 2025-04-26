@@ -1,5 +1,4 @@
 import { PickType } from '@nestjs/swagger';
-import { TemplateCreateRequestDto } from './template.create.request.dto';
 import { TemplateQuestionCreateRequestDto } from './template-question.create.request.dto';
 
 export class TemplateQuestionUpdateRequestDto extends PickType(
@@ -11,5 +10,6 @@ export class TemplateQuestionUpdateRequestDto extends PickType(
         'options',
         'validation',
         'type',
+        'order',
     ] as const
 ) {}

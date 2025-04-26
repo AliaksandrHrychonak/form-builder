@@ -53,6 +53,14 @@ export class TemplateQuestionCreateRequestDto {
     template: string;
 
     @ApiProperty({
+        example: faker.string.uuid(),
+        required: true,
+    })
+    @IsNotEmpty()
+    @IsUUID()
+    user: string;
+
+    @ApiProperty({
         example: faker.lorem.text(),
         required: true,
         maxLength: 150,

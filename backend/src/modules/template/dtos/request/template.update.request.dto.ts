@@ -14,20 +14,4 @@ export class TemplateUpdateRequestDto extends PickType(
     @IsNotEmpty()
     @IsUUID('4', { each: true })
     tags: string[];
-
-    @ApiProperty({
-        example: [faker.string.uuid()],
-        required: true,
-    })
-    @IsNotEmpty()
-    @IsUUID('4', { each: true })
-    questions: string[];
-
-    @ApiProperty({
-        example: [faker.string.uuid()],
-        required: true,
-    })
-    @IsNotEmpty()
-    @IsUUID('4', { each: true })
-    forms: string[];
 }

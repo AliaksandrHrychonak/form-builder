@@ -21,7 +21,7 @@ export class TemplateCommentCreateRequestDto {
     @MinLength(1)
     @MaxLength(1000)
     @Type(() => String)
-    comment: string;
+    text: string;
 
     @ApiProperty({
         example: faker.string.uuid(),
