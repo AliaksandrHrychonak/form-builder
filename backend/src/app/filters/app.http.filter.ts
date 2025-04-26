@@ -1,7 +1,7 @@
 import {
-    ExceptionFilter,
-    Catch,
     ArgumentsHost,
+    Catch,
+    ExceptionFilter,
     HttpException,
     HttpStatus,
     Logger,
@@ -109,8 +109,6 @@ export class AppHttpFilter implements ExceptionFilter {
             _metadata: metadata,
             data,
         };
-
-        console.log(exception);
 
         response
             .setHeader('x-custom-lang', xLanguage)
