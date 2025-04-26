@@ -68,16 +68,16 @@ export class AppMiddlewareModule implements NestModule {
     configure(consumer: MiddlewareConsumer): void {
         consumer
             .apply(
+                CorsMiddleware,
                 HelmetMiddleware,
                 JsonBodyParserMiddleware,
                 TextBodyParserMiddleware,
                 RawBodyParserMiddleware,
                 UrlencodedBodyParserMiddleware,
-                CorsMiddleware,
                 UrlVersionMiddleware,
                 ResponseTimeMiddleware,
                 MessageCustomLanguageMiddleware
             )
-            .forRoutes('{*wildcard}');
+            .forRoutes('*');
     }
 }
