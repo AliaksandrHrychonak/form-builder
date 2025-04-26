@@ -51,7 +51,7 @@ RUN adduser --system --uid 1001 nextjs
 # Copy necessary files
 COPY --from=builder /app/public ./public
 #COPY --from=builder /app/.env ./.env
-COPY --from=builder /app/ecosystem.config.js ./ecosystem.config.js
+COPY --from=builder /app/ecosystem.config.js ./ecosystem.config.cjs
 
 # Copy the standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
@@ -66,4 +66,4 @@ ENV HOSTNAME="0.0.0.0"
 ENV DOMAIN="form-builder.monster"
 
 # Start the application using PM2
-CMD ["pm2-runtime", "start", "ecosystem.config.js"]
+CMD ["pm2-runtime", "start", "ecosystem.config.cjs"]
