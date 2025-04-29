@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getUserProfileApi } from '@entities/session';
 import { VIEWER_TAG } from '@shared/api';
+
+import { getUserProfileApi } from '../api';
 
 import type { IErrorException, IResponse, IViewerProfile } from '@shared/api';
 import type { UseQueryResult } from '@tanstack/react-query';
