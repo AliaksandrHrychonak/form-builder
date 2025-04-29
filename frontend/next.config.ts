@@ -6,7 +6,6 @@ const nextConfig = {
     },
     assetPrefix: process.env.NODE_ENV === 'production' ? undefined : '',
     basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
-
     async rewrites(): Promise<{ beforeFiles: { source: string; destination: string; locale: boolean }[] }> {
         return {
             beforeFiles: [
