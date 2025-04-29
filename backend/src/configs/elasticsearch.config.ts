@@ -1,5 +1,4 @@
 import { registerAs } from '@nestjs/config';
-import { ENUM_APP_ENVIRONMENT } from '../app/constants/app.enum.constant';
 
 export default registerAs(
     'elasticsearch',
@@ -16,8 +15,9 @@ export default registerAs(
         ),
         sniffOnStart: process.env.ELASTICSEARCH_SNIFF_ON_START === 'true',
         tls: {
-            rejectUnauthorized:
-                process.env.APP_ENV === ENUM_APP_ENVIRONMENT.PRODUCTION,
+            rejectUnauthorized: false,
+            // rejectUnauthorized:
+            //     process.env.APP_ENV === ENUM_APP_ENVIRONMENT.PRODUCTION,
         },
         apiVersion: '8.x',
     })
