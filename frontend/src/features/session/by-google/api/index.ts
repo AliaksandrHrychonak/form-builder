@@ -1,1 +1,1 @@
-export * from './google-signin';
+export * from './login-with-google-api';

@@ -2,9 +2,9 @@ import { baseApi } from '@shared/api';
 
 import type { IResponse, ISession } from '@shared/api';
 
-export const googleSignin = async (token: string | undefined): Promise<IResponse<ISession>> => {
-    const response = await baseApi.post(
-        '/user/user/login/social/googleSignin',
+export const loginWithGoogleApi = async (token: string | undefined): Promise<IResponse<ISession>> => {
+    const response = await baseApi.post<IResponse<ISession>>(
+        '/user/user/login/social/google',
         {},
         {
             headers: {
