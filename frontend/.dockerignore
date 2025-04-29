@@ -1,5 +1,10 @@
-node_modules
 .git
+.gitignore
+node_modules
+README.md
 .next
-*.md
-.env.local
+.husky
+.vscode
+coverage
+.env*
+!.env.example
