@@ -8,6 +8,7 @@ export interface IMessageValidationError {
 export interface ValidationError {
     target?: object;
     property: string;
+    message: string;
     value?: unknown;
     constraints?: {
         [type: string]: string;
