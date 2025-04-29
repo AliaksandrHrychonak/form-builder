@@ -4,38 +4,48 @@ import { Children } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-    DropdownMenuTrigger,
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuItem,
     Avatar,
     AvatarFallback,
-    Button,
     AvatarImage,
+    Button,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from '@shared/ui';
 
 import type { IViewerProfile } from '@shared/api';
-import type { FC, JSX, ReactNode } from 'react';
+import type { ComponentProps, FC, JSX, ReactNode } from 'react';
 
-interface IViewerBarProps {
+interface IViewerBarProps extends ComponentProps<typeof DropdownMenu> {
     profileViewer: IViewerProfile | undefined;
     children?: ReactNode;
 }
 
-export const ViewerBar: FC<IViewerBarProps> = ({ profileViewer, children }): JSX.Element => {
+export const ViewerBar: FC<IViewerBarProps> = ({ profileViewer, children, ...props }): JSX.Element => {
     return (
-        <DropdownMenu>
+        <DropdownMenu {...props}>
             <DropdownMenuTrigger asChild>
-                <Button variant='outline' className='px-0 w-9'>
-                    <Avatar className='h-full w-full rounded-lg grayscale'>
-                        <AvatarImage
-                            src={profileViewer?.photo?.completedUrl}
-                            alt={`${profileViewer?.firstName} ${profileViewer?.lastName}`}
-                        />
-                        <AvatarFallback className='rounded-lg uppercase'>{profileViewer?.firstName[0]}</AvatarFallback>
-                    </Avatar>
+                <Button variant='outline' className='p-1'>
+                    <span className='flex gap-0.5'>
+                        <Avatar className='h-7 w-7 rounded-lg grayscale'>
+                            <AvatarImage
+                                src={profileViewer?.photo?.completedUrl}
+                                alt={`${profileViewer?.firstName} ${profileViewer?.lastName}`}
+                            />
+                            <AvatarFallback className='rounded-lg bg-muted uppercase'>
+                                {profileViewer?.firstName[0]}
+                            </AvatarFallback>
+                        </Avatar>
+                        <span className='flex flex-col items-start justify-center'>
+                            <span className='text-xs truncate font-medium max-w-25 leading-none'>{`${profileViewer?.firstName} ${profileViewer?.lastName}`}</span>
+                            <span className='text-xs text-muted-foreground truncate max-w-25 leading-none'>
+                                {profileViewer?.email}
+                            </span>
+                        </span>
+                    </span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -44,9 +54,10 @@ export const ViewerBar: FC<IViewerBarProps> = ({ profileViewer, children }): JSX
                 align='end'
                 sideOffset={4}
             >
+                {/*TODO map account user list*/}
                 <DropdownMenuLabel className='p-0 font-normal'>
                     <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
-                        <Avatar className='h-8 w-8 rounded-lg grayscale'>
+                        <Avatar className='h-4 w-4 rounded-lg grayscale'>
                             <AvatarImage
                                 src={profileViewer?.photo?.completedUrl}
                                 alt={`${profileViewer?.firstName} ${profileViewer?.lastName}`}
@@ -55,12 +66,7 @@ export const ViewerBar: FC<IViewerBarProps> = ({ profileViewer, children }): JSX
                                 {profileViewer?.firstName[0]}
                             </AvatarFallback>
                         </Avatar>
-                        <div className='grid flex-1 text-left text-sm leading-tight'>
-                            <span className='truncate font-medium max-w-52'>{`${profileViewer?.firstName} ${profileViewer?.lastName}`}</span>
-                            <span className='text-xs text-muted-foreground truncate max-w-52'>
-                                {profileViewer?.email}
-                            </span>
-                        </div>
+                        <span className='truncate font-medium max-w-52'>{`${profileViewer?.firstName}`}</span>
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
