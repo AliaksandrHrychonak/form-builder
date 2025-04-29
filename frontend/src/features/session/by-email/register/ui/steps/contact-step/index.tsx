@@ -1,11 +1,12 @@
 'use client';
 
-import { useMultiStepFormContext, FormFieldProvider } from '@shared/lib';
-import { Form, FormControl, FormItem, FormLabel, FormMessage, Input, Button } from '@shared/ui';
+import { FormFieldProvider, useClientTranslation, useMultiStepFormContext } from '@shared/lib';
+import { Button, Form, FormControl, FormItem, FormLabel, FormMessage, Input } from '@shared/ui';
 
 import type { JSX } from 'react';
 
 export const ContactStep = (): JSX.Element => {
+    const { t } = useClientTranslation('auth');
     const { form, nextStep, isStepValid } = useMultiStepFormContext();
     return (
         <Form {...form}>
@@ -14,7 +15,7 @@ export const ContactStep = (): JSX.Element => {
                     name='contactInfo.email'
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>{t('fields.email')}</FormLabel>
                             <FormControl>
                                 <Input type='email' placeholder='example@mail.com' {...field} />
                             </FormControl>
@@ -24,7 +25,7 @@ export const ContactStep = (): JSX.Element => {
                 />
                 <footer className='flex justify-end'>
                     <Button type='button' onClick={nextStep} disabled={!isStepValid()}>
-                        Next
+                        {t('buttons.next')}
                     </Button>
                 </footer>
             </div>

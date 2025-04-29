@@ -1,0 +1,10 @@
+{
+    "buttons": {
+        "toggle": "Toggle theme"
+    },
+    "options": {
+        "dark": "Dark",
+        "light": "Light",
+        "system": "System"
+    }
+}

@@ -11,19 +11,20 @@ export const RegisterFormSchema = createStepSchema({
     contactInfo: z.object({
         email: emailScheme,
     }),
-    // TODO Error texts should be in the config, need fix after review
     passwordInfo: z
         .object({
             password: passwordScheme,
-            confirmPassword: z.string().nonempty({ message: 'Confirm the password' }).optional(),
+            confirmPassword: z.string().nonempty().optional(),
         })
         .superRefine(({ password, confirmPassword }, ctx) => {
             validatePassword(password, ctx);
             if (confirmPassword !== password) {
                 ctx.addIssue({
-                    code: 'custom',
+                    code: z.ZodIssueCode.custom,
                     path: ['confirmPassword'],
-                    message: 'Password mismatch',
+                    params: {
+                        i18n: 'errors.password.mismatch',
+                    },
                 });
             }
         }),

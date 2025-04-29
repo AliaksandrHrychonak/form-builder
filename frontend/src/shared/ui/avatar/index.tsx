@@ -1,4 +1,3 @@
-// components/ui/avatar.tsx
 'use client';
 
 import * as AvatarPrimitive from '@radix-ui/react-avatar';

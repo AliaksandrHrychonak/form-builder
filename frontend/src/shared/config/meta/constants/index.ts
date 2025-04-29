@@ -20,21 +20,21 @@ export const BASE_META: Metadata = {
 
     // Open Graph
     // openGraph: {
-    //     title: 'OG заголовок',
-    //     description: 'OG описание',
+    //     title: 'OG title',
+    //     description: 'OG description',
     //     url: 'https://example.com',
-    //     siteName: 'Название сайта',
+    //     siteName: 'Site name',
     //     images: [
     //         {
     //             url: 'https://example.com/og-image.jpg',
     //             width: 1200,
     //             height: 630,
-    //             alt: 'OG изображение',
+    //             alt: 'OG image',
     //             secureUrl: 'https://example.com/secure-og-image.jpg',
     //             type: 'image/jpeg',
     //         },
     //     ],
-    //     locale: 'ru_RU',
+    //     locale: 'en_US',
     //     type: 'website',
     //     determiner: 'auto',
     //     audio: [
@@ -56,25 +56,25 @@ export const BASE_META: Metadata = {
     //     emails: ['contact@example.com'],
     //     phoneNumbers: ['+1-123-456-7890'],
     //     faxNumbers: ['+1-123-456-7891'],
-    //     countryName: 'Russia',
-    //     locality: 'Moscow',
-    //     region: 'Moscow Region',
-    //     postalCode: '123456',
+    //     countryName: 'United States',
+    //     locality: 'New York',
+    //     region: 'NY',
+    //     postalCode: '10001',
     //     streetAddress: 'Example Street, 123',
     // },
     //
     // // Twitter
     // twitter: {
     //     card: 'summary_large_image',
-    //     title: 'Twitter заголовок',
-    //     description: 'Twitter описание',
+    //     title: 'Twitter title',
+    //     description: 'Twitter description',
     //     siteId: '1234567',
     //     creator: '@username',
     //     creatorId: '1234567',
     //     images: [
     //         {
     //             url: 'https://example.com/twitter-image.jpg',
-    //             alt: 'Twitter изображение',
+    //             alt: 'Twitter image',
     //             secureUrl: 'https://example.com/secure-twitter-image.jpg',
     //             type: 'image/jpeg',
     //             width: 1200,

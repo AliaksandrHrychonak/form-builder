@@ -1,0 +1,48 @@
+{
+    "main": {
+        "title": "Form Builder - Twórz Formularze Online",
+        "description": "Twórz, udostępniaj i zarządzaj profesjonalnymi formularzami online. Przeglądaj naszą kolekcję publicznych szablonów formularzy i dostosuj je do swoich potrzeb. Zacznij tworzyć formularze już dziś!",
+        "keywords": [
+            "kreator formularzy",
+            "formularze online",
+            "generator formularzy",
+            "szablony formularzy",
+            "własne formularze",
+            "formularze internetowe",
+            "tworzenie formularzy"
+        ]
+    },
+    "signin": {
+        "title": "Zaloguj się do Form Builder",
+        "description": "Uzyskaj dostęp do swojego konta Form Builder, aby zarządzać formularzami i szablonami. Twórz i dostosowuj formularze za pomocą naszego intuicyjnego kreatora.",
+        "keywords": [
+            "logowanie",
+            "zaloguj się",
+            "dostęp do form builder",
+            "konto użytkownika",
+            "zarządzanie formularzami"
+        ]
+    },
+    "signup": {
+        "title": "Utwórz konto Form Builder",
+        "description": "Dołącz do Form Builder, aby zacząć tworzyć profesjonalne formularze online. Uzyskaj dostęp do szablonów, narzędzi do zarządzania formularzami i więcej.",
+        "keywords": [
+            "rejestracja",
+            "utwórz konto",
+            "załóż konto",
+            "rejestracja form builder",
+            "nowe konto"
+        ]
+    },
+    "dashboard": {
+        "title": "Panel Form Builder",
+        "description": "Zarządzaj formularzami, przeglądaj zgłoszenia i uzyskaj dostęp do szablonów formularzy. Kontroluj wszystkie aspekty swoich formularzy z jednego miejsca.",
+        "keywords": [
+            "panel kontrolny",
+            "zarządzanie formularzami",
+            "analityka formularzy",
+            "panel sterowania",
+            "szablony formularzy"
+        ]
+    }
+}

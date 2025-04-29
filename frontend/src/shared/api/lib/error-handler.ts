@@ -37,7 +37,7 @@ export class ErrorHandler implements IErrorHandler {
         return errors.map(
             (error: ValidationError): IMessageValidationError => ({
                 property: error.property,
-                message: Object.values(error.constraints ?? {})[0] ?? 'Unknown validation error',
+                message: error.message ?? 'errors.unknown',
             })
         );
     }

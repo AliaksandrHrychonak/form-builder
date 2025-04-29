@@ -1,60 +1,48 @@
 import '../styles/global.css';
 import { Geist, Geist_Mono } from 'next/font/google';
 
-import { getDictionary } from '@shared/lib/i18n';
+import { languages } from '@shared/config';
 import { Toaster } from '@shared/ui';
 
-import { WithAuthProvider, WithDictionaryProvider, WithQueryClient, WithThemeProvider } from '../providers';
+import { WithAuthProvider, WithQueryClient, WithThemeProvider } from '../providers';
 
 import type { FC, ReactNode } from 'react';
 
 const geistSans = Geist({
+    variable: '--font-geist-sans',
     subsets: ['latin'],
-    variable: '--font-geist-mono',
-    display: 'swap',
-    preload: true,
-    weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
 });
 
 const geistMono = Geist_Mono({
+    variable: '--font-geist-mono',
     subsets: ['latin'],
-    display: 'swap',
-    variable: '--font-geist-sans',
-    preload: true,
-    weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
 });
 
 interface RootLayoutProps {
     children: ReactNode;
     params: {
-        lang: string;
+        lng: string;
     };
 }
 
-const RootLayout: FC<RootLayoutProps> = async ({ children, params }) => {
-    const { lang } = await params;
-    const dictionary = await getDictionary(lang);
+export async function generateStaticParams(): Promise<{ lng: string }[]> {
+    return languages.map((lng) => ({ lng }));
+}
+
+export const RootLayout: FC<RootLayoutProps> = async ({ children, params }) => {
+    const { lng } = await params;
     return (
-        <html lang={lang} suppressHydrationWarning>
-            <WithDictionaryProvider lang={lang} initialDictionary={dictionary}>
-                <body
-                    className={`${geistSans.variable} ${geistMono.variable} bg-background min-h-svh font-sans antialiased select-none flex flex-col`}
-                >
-                    <WithQueryClient>
-                        <WithThemeProvider
-                            attribute='class'
-                            defaultTheme='light'
-                            enableSystem
-                            disableTransitionOnChange
-                        >
-                            <WithAuthProvider>{children}</WithAuthProvider>
-                        </WithThemeProvider>
-                        <Toaster />
-                    </WithQueryClient>
-                </body>
-            </WithDictionaryProvider>
+        <html lang={lng} suppressHydrationWarning>
+            <body
+                className={`${geistSans.variable} ${geistMono.variable} bg-background min-h-svh font-sans antialiased select-none flex flex-col`}
+            >
+                <WithQueryClient>
+                    <WithThemeProvider attribute='class' defaultTheme='light' enableSystem disableTransitionOnChange>
+                        <WithAuthProvider>{children}</WithAuthProvider>
+                    </WithThemeProvider>
+                    <Toaster />
+                </WithQueryClient>
+            </body>
         </html>
     );
 };
-
-export default RootLayout;

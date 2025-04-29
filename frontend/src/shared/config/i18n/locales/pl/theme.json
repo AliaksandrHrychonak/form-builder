@@ -1,0 +1,10 @@
+{
+    "buttons": {
+        "toggle": "Zmień motyw"
+    },
+    "options": {
+        "dark": "Ciemny",
+        "light": "Jasny",
+        "system": "Systemowy"
+    }
+}

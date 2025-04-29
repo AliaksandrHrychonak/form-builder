@@ -1,1 +1,1 @@
-export { RootLayout as default } from '@/app/layouts';
+export { RootLayout as default, generateStaticParams } from '@/app/layouts';

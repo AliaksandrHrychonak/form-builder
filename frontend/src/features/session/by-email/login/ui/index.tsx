@@ -3,19 +3,24 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
+import { Config } from '@shared/config';
 import { FormFieldProvider } from '@shared/lib';
-import { Form, FormControl, FormItem, FormLabel, FormMessage, Input, Button } from '@shared/ui';
+import { useClientTranslation } from '@shared/lib/i18n/use-client-translation';
+import { Button, Form, FormControl, FormItem, FormLabel, FormMessage, Input, LinkClient } from '@shared/ui';
 
-import { useLoginFormController, LoginFormSchema, createDefaultValuesLogin } from '../model';
+import { createDefaultValuesLogin, LoginFormSchema, useLoginFormController } from '../model';
 
 import type { LoginFormData } from '../model';
 import type { FC } from 'react';
+
+const { APP_ROUTES } = Config;
 
 interface ILoginFormProps {
     onComplete?: () => void;
 }
 
 export const LoginForm: FC<ILoginFormProps> = ({ onComplete }) => {
+    const { t } = useClientTranslation('auth');
     const form = useForm<LoginFormData>({
         resolver: zodResolver(LoginFormSchema),
         defaultValues: createDefaultValuesLogin(),
@@ -47,7 +52,7 @@ export const LoginForm: FC<ILoginFormProps> = ({ onComplete }) => {
                     name='email'
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>{t('fields.email')}</FormLabel>
                             <FormControl>
                                 <Input placeholder='example@mail.com' {...field} />
                             </FormControl>
@@ -62,23 +67,25 @@ export const LoginForm: FC<ILoginFormProps> = ({ onComplete }) => {
                     render={({ field }) => (
                         <FormItem>
                             <div className='w-full flex justify-between items-center'>
-                                <FormLabel className=''>Password</FormLabel>
-                                <a href='#' className='ml-auto text-sm underline-offset-4 hover:underline'>
-                                    Forgot your password?
-                                </a>
+                                <FormLabel className=''>{t('fields.password')}</FormLabel>
+                                {/*TODO add forgotPassword page */}
+                                <LinkClient
+                                    href={APP_ROUTES.FORGOT_PASSWORD}
+                                    className='ml-auto text-sm underline-offset-4 hover:underline'
+                                >
+                                    {t('helpers.forgotPassword')}
+                                </LinkClient>
                             </div>
-
                             <FormControl>
                                 <Input placeholder='*' type='password' {...field} />
                             </FormControl>
-
                             <FormMessage />
                         </FormItem>
                     )}
                 />
 
                 <Button type='submit' disabled={!canSubmit}>
-                    Sign in with email
+                    {t('buttons.submitSignIn')}
                 </Button>
             </form>
         </Form>

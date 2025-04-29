@@ -1,0 +1,11 @@
+{
+    "title": "Create an account",
+    "description": "Enter your account information below to create your account",
+    "orContinueWith": "Or create with",
+    "haveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "terms": "By completing registration, you agree to our",
+    "termsLink": "Terms of Service",
+    "privacyLink": "Privacy Policy",
+    "and": "and"
+}

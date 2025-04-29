@@ -1,14 +1,9 @@
+'use client';
+
 import { signOut } from 'next-auth/react';
 
-export const logout = async (): Promise<void> => {
-    try {
-        await signOut({
-            callbackUrl: '/',
-            redirect: true,
-        });
-        sessionStorage.clear();
-        localStorage.clear();
-    } catch (error) {
-        console.error(error);
-    }
+import type { SignOutParams, SignOutResponse } from 'next-auth/react';
+
+export const logoutApi = async (data?: SignOutParams): Promise<SignOutResponse | undefined> => {
+    return signOut(data);
 };

@@ -1,0 +1,48 @@
+{
+    "main": {
+        "title": "Form Builder - Create Custom Forms Online",
+        "description": "Create, share and manage professional online forms. Browse our collection of public form templates and customize them to match your specific needs. Start building your forms today!",
+        "keywords": [
+            "form builder",
+            "online forms",
+            "form generator",
+            "form templates",
+            "custom forms",
+            "web forms",
+            "form creation"
+        ]
+    },
+    "signin": {
+        "title": "Sign In to Form Builder",
+        "description": "Access your Form Builder account to manage your forms and templates. Create and customize forms with our intuitive builder.",
+        "keywords": [
+            "sign in",
+            "login",
+            "form builder access",
+            "user account",
+            "form management"
+        ]
+    },
+    "signup": {
+        "title": "Create Form Builder Account",
+        "description": "Join Form Builder to start creating professional online forms. Get access to templates, form management tools, and more.",
+        "keywords": [
+            "sign up",
+            "create account",
+            "register",
+            "form builder registration",
+            "new account"
+        ]
+    },
+    "dashboard": {
+        "title": "Form Builder Dashboard",
+        "description": "Manage your forms, view submissions, and access form templates. Control all aspects of your forms from one central location.",
+        "keywords": [
+            "dashboard",
+            "form management",
+            "form analytics",
+            "form control panel",
+            "form templates"
+        ]
+    }
+}

@@ -1,19 +1,27 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import React from 'react';
 
+import { useClientTranslation } from '@shared/lib';
 import { Button } from '@shared/ui';
 
-import type { JSX } from 'react';
+import type { ComponentProps, FC, JSX } from 'react';
 
-export const GoogleSignInButton = (): JSX.Element => {
+interface IGoogleSignInButtonProps extends ComponentProps<typeof Button> {}
+
+export const GoogleSignInButton: FC<IGoogleSignInButtonProps> = ({ ...props }): JSX.Element => {
+    const { t } = useClientTranslation('auth');
     return (
         <Button
             variant='outline'
             className='w-full'
             type='button'
-            onClick={() => signIn('google', { redirect: false })}
+            onClick={async () =>
+                await signIn('google', {
+                    redirect: true,
+                })
+            }
+            {...props}
         >
             <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
                 <path
@@ -21,7 +29,7 @@ export const GoogleSignInButton = (): JSX.Element => {
                     fill='currentColor'
                 />
             </svg>
-            Login with Google
+            {t('buttons.googleSignIn')}
         </Button>
     );
 };

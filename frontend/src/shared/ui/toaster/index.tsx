@@ -4,6 +4,7 @@ import { useTheme } from 'next-themes';
 import { Toaster as Sonner } from 'sonner';
 
 import type { ThemeType } from '../../config';
+import type { IMessageValidationError } from '@shared/api';
 import type { ComponentProps, JSX } from 'react';
 
 type ToasterProps = ComponentProps<typeof Sonner>;
@@ -27,5 +28,25 @@ export const Toaster = ({ ...props }: ToasterProps): JSX.Element => {
             }}
             {...props}
         />
+    );
+};
+
+export const ToasterValidationErrorDescriptionMessage = ({
+    data,
+}: {
+    data: IMessageValidationError[] | undefined;
+}): JSX.Element | '' => {
+    if (!data?.length) {
+        return '';
+    }
+
+    return (
+        <div className='mt-1 flex max-h-[200px] flex-col gap-1 overflow-y-auto'>
+            {data?.map((error, index) => (
+                <span key={index} className='line-clamp-2 text-xs'>
+                    {error.message}
+                </span>
+            ))}
+        </div>
     );
 };

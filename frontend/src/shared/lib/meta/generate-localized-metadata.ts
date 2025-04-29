@@ -1,8 +1,9 @@
-import { getDictionary } from '../i18n';
-import { generateAlternatesMetadata } from './generate-alternates-metadata';
-import { generateMetadata } from './generate-metadata';
-import { getPageMetadata } from './get-page-metadata';
+import { BASE_META } from '@shared/config';
 
+import { getServerTranslation } from '../i18n';
+import { generateAlternatesMetadata } from './generate-alternates-metadata';
+
+import type { Resources } from 'i18next';
 import type { Metadata } from 'next';
 
 /**
@@ -13,19 +14,20 @@ import type { Metadata } from 'next';
  */
 export const generateLocalizedMetadata = async (params: { lang: string }, pathname: string): Promise<Metadata> => {
     try {
-        const { lang } = await params;
-        const dictionary = await getDictionary(lang ?? 'en');
-        const pageMetadata = getPageMetadata(pathname, dictionary.metadata);
-        return {
-            ...generateMetadata(pageMetadata),
-            ...generateAlternatesMetadata(lang, pathname),
-        };
-    } catch (error) {
-        console.error(`Failed to generate metadata for ${pathname}:`, error);
+        const { t } = await getServerTranslation('metadata');
+
+        const pageKey =
+            pathname === '/' ? 'main' : ((pathname.split('/').pop() ?? 'main') as keyof Resources['metadata']);
 
         return {
-            title: 'Page Not Found',
-            description: 'The requested page could not be found',
+            ...BASE_META,
+            title: t(`${pageKey}.title`),
+            description: t(`${pageKey}.description`),
+            keywords: t(`${pageKey}.keywords`, { returnObjects: true }),
+            alternates: generateAlternatesMetadata(params.lang, pathname),
         };
+    } catch (error) {
+        console.error(`Failed to generate metadata for ${pathname}: ${JSON.stringify(error)}`);
+        return BASE_META;
     }
 };

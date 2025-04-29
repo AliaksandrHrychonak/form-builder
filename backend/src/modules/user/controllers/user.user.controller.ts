@@ -208,7 +208,7 @@ export class UserUserController {
     @UserLoginSocialGoogleDoc()
     @Response('user.loginWithSocialGoogle')
     @AuthSocialGoogleProtected()
-    @Post('/login/social/googleSignin')
+    @Post('/login/social/google')
     async loginWithGoogle(
         @AuthJwtPayload<AuthSocialGooglePayloadDto>()
         { email }: AuthSocialGooglePayloadDto
