@@ -1,7 +1,7 @@
-import { useUserProfileQuery } from '@entities/session';
 import { ENUM_POLICY_ROLE_TYPE } from '@shared/api';
 
-import { hasRequiredRole, hasPermissions } from '../lib';
+import { useUserProfileQuery } from './use-user-profile-query';
+import { hasPermissions, hasRequiredRole } from '../lib';
 
 import type { IPermission, IRole } from '@shared/api';
 import type { JSX, ReactNode } from 'react';
