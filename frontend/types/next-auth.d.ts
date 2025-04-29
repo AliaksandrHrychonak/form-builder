@@ -1,31 +1,32 @@
 import type { ENUM_POLICY_ROLE_TYPE } from '@shared/api';
-import type { DefaultSession } from 'next-auth';
+
+interface ExtendedUser extends DefaultUser {
+    accessToken?: string;
+    refreshToken?: string;
+    roleType?: string;
+    tokenType?: string;
+    expiresIn?: number;
+}
 
 declare module 'next-auth' {
     interface Session {
-        tokenType: string;
-        roleType: ENUM_POLICY_ROLE_TYPE;
-        expiresIn: number;
-        accessToken: string;
-        refreshToken: string;
-        user: {} & DefaultSession['user'];
+        accessToken?: string;
+        refreshToken?: string;
+        roleType?: ENUM_POLICY_ROLE_TYPE;
+        expires: string;
+        tokenType?: string;
+        user?: {
+            email?: string | null;
+        };
     }
 
-    interface User {
-        tokenType: string;
-        roleType: ENUM_POLICY_ROLE_TYPE;
-        expiresIn: number;
-        accessToken: string;
-        refreshToken: string;
-    }
-}
-
-declare module 'next-auth/jwt' {
     interface JWT {
-        tokenType: string;
-        roleType: ENUM_POLICY_ROLE_TYPE;
-        expiresIn: number;
-        accessToken: string;
-        refreshToken: string;
+        accessToken?: string;
+        refreshToken?: string;
+        roleType?: ENUM_POLICY_ROLE_TYPE;
+        expiresAt?: number;
+        tokenType?: string;
     }
+
+    interface User extends ExtendedUser {}
 }
