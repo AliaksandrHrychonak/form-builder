@@ -1,1 +1,1 @@
-export * from './apple-signin';
+export * from './login-with-apple-api';
