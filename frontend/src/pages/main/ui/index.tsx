@@ -1,6 +1,6 @@
 import { generateLocalizedMetadata } from '@shared/lib';
 import { Header } from '@widgets/header';
-import TemplatePublicSearchBar from '@widgets/template-public-search-bar/ui';
+import { TemplateSearchBar } from '@widgets/template-search-bar';
 
 import type { Metadata } from 'next';
 import type { FC, JSX } from 'react';
@@ -12,13 +12,13 @@ export const generateMetadataMainPage = async ({ params }: { params: PageParams 
     return generateLocalizedMetadata(resolvedParams, 'main');
 };
 
-export const MainPage: FC = (): JSX.Element => {
+export const MainPage: FC = async (): Promise<JSX.Element> => {
     return (
-        <div>
+        <>
             <Header />
             <main>
-                <TemplatePublicSearchBar />
+                <TemplateSearchBar />
             </main>
-        </div>
+        </>
     );
 };
