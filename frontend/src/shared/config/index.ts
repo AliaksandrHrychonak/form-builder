@@ -1,10 +1,10 @@
 export const Config = {
-    BASE_API_URL: process.env.NEXT_PUBLIC_API_URL ?? '',
-    API_KEY_PUBLIC: process.env.NEXT_PUBLIC_API_KEY ?? '',
+    BASE_API_URL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api',
+    API_KEY_PUBLIC: process.env.NEXT_PUBLIC_API_KEY ?? 'v8VB0yY887lMpTA2VJMV:zeZbtGTugBTn3Qd5UXtSZBwt7gn3bg',
     API_WITH_CREDENTIALS: process.env.NEXT_PUBLIC_API_WITH_CREDENTIALS === 'true',
     API_KEY_PRIVATE: process.env.API_KEY_PRIVATE ?? '',
-    API_KEY_HEADER: process.env.NEXT_PUBLIC_API_KEY_HEADER ?? '',
-    API_LANG_HEADER: process.env.NEXT_PUBLIC_API_LANG_HEADER ?? '',
+    API_KEY_HEADER: process.env.NEXT_PUBLIC_API_KEY_HEADER ?? 'x-api-key',
+    API_LANG_HEADER: process.env.NEXT_PUBLIC_API_LANG_HEADER ?? 'x-custom-lang',
     APP_ROUTES: {
         SIGN_IN: 'auth/signin',
         SIGN_UP: 'auth/signup',
