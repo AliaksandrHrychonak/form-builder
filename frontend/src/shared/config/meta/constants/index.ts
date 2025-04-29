@@ -159,37 +159,37 @@ export const BASE_META: Metadata = {
         ],
         other: [
             {
-                rel: 'android-chrome-icon',
+                rel: 'icon',
                 url: '/favicons/android-chrome-36x36.png',
                 sizes: '36x36',
             },
             {
-                rel: 'android-chrome-icon',
+                rel: 'icon',
                 url: '/favicons/android-chrome-48x48.png',
                 sizes: '48x48',
             },
             {
-                rel: 'android-chrome-icon',
+                rel: 'icon',
                 url: '/favicons/android-chrome-72x72.png',
                 sizes: '72x72',
             },
             {
-                rel: 'android-chrome-icon',
+                rel: 'icon',
                 url: '/favicons/android-chrome-96x96.png',
                 sizes: '96x96',
             },
             {
-                rel: 'android-chrome-icon',
+                rel: 'icon',
                 url: '/favicons/android-chrome-144x144.png',
                 sizes: '144x144',
             },
             {
-                rel: 'android-chrome-icon',
+                rel: 'icon',
                 url: '/favicons/android-chrome-192x192.png',
                 sizes: '192x192',
             },
             {
-                rel: 'android-chrome-icon',
+                rel: 'icon',
                 url: '/favicons/android-chrome-512x512.png',
                 sizes: '512x512',
             },

@@ -1,56 +1,69 @@
-# Base image
-FROM node:20-alpine AS base
+# syntax=docker.io/docker/dockerfile:1
+
+FROM node:18-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Dependencies installation stage
-FROM base AS deps
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable pnpm && \
-    pnpm install --frozen-lockfile
+# Install dependencies based on the preferred package manager
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
-# Build stage
+
+# Rebuild the source code only when needed
 FROM base AS builder
+WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
-RUN corepack enable pnpm && pnpm run build
 
-# Production stage
+# Disable telemetry during build
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN \
+  if [ -f yarn.lock ]; then yarn run build; \
+  elif [ -f package-lock.json ]; then npm run build; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+
+# Production image, copy all the files and run next
 FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Install PM2 globally
 RUN npm install -g pm2
 
-# Create non-root user for security
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Copy built assets
+# Copy necessary files
 COPY --from=builder /app/public ./public
+#COPY --from=builder /app/.env ./.env
 COPY --from=builder /app/ecosystem.config.cjs ./ecosystem.config.cjs
 
-# Copy standalone build
+# Copy the standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy i18n files
-COPY --from=builder /app/public/locales ./public/locales
-
-# Set correct permissions
-RUN chown -R nextjs:nodejs /app
-
-# Switch to non-root user
 USER nextjs
 
-# Expose application port
 EXPOSE 3000
 
-# Set runtime environment variables
-ENV PORT 3000
-ENV HOSTNAME 0.0.0.0
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+ENV DOMAIN="form-builder.monster"
 
 # Start the application using PM2
-CMD ["pm2-runtime", "ecosystem.config.cjs"]
+CMD ["pm2-runtime", "start", "ecosystem.config.cjs"]
