@@ -5,7 +5,9 @@ import { cva } from 'class-variance-authority';
 import { PanelLeft } from 'lucide-react';
 import { createContext, forwardRef, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { useIsMobile, cn } from '../../lib';
+import { Config } from '@shared/config';
+
+import { cn, useIsMobile } from '../../lib';
 import { Button } from '../button';
 import { Input } from '../input';
 import { Separator } from '../separator';
@@ -16,8 +18,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../too
 import type { VariantProps } from 'class-variance-authority';
 import type { ComponentProps, CSSProperties, ElementRef } from 'react';
 
+const { UI_COOKIE_MAX_AGE } = Config;
+
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
-const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
+const SIDEBAR_COOKIE_MAX_AGE = UI_COOKIE_MAX_AGE;
 const SIDEBAR_WIDTH = '16rem';
 const SIDEBAR_WIDTH_MOBILE = '18rem';
 const SIDEBAR_WIDTH_ICON = '3rem';
