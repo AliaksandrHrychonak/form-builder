@@ -21,3 +21,4 @@ export * from './scroll-area';
 export * from './logo';
 export * from './multi-step-form';
 export * from './dialog';
+export * from './link';
