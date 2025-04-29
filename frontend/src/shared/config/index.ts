@@ -13,9 +13,9 @@ export const Config = {
         PRIVACY_POLICY: 'auth/privacy',
         FORGOT_PASSWORD: 'auth/forgot-password',
     },
-    DEFAULT_DELAY: process.env.NEXT_PUBLIC_DEFAULT_DELAY,
-    UI_COOKIE_MAX_AGE: process.env.NEXT_PUBLIC_UI_COOKIE_MAX_AGE,
-    UI_MOBILE_BREAKPOINT: process.env.NEXT_PUBLIC_UI_MOBILE_BREAKPOINT,
+    DEFAULT_DELAY: Number(process.env.NEXT_PUBLIC_DEFAULT_DELAY),
+    UI_COOKIE_MAX_AGE: Number(process.env.NEXT_PUBLIC_UI_COOKIE_MAX_AGE),
+    UI_MOBILE_BREAKPOINT: Number(process.env.NEXT_PUBLIC_UI_MOBILE_BREAKPOINT),
 } as const;
 
 export type Config = typeof Config;
