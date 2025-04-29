@@ -1,0 +1,11 @@
+{
+    "errors": {
+        "password": {
+            "mismatch": "Password mismatch",
+            "lowercase": "Add a lowercase letter",
+            "uppercase": "Add an uppercase letter",
+            "number": "Add a number",
+            "special": "Add a special character #?!@$%^&*-"
+        }
+    }
+}

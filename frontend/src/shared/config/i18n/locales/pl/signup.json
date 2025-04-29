@@ -1,0 +1,11 @@
+{
+    "title": "Utwórz konto",
+    "description": "Wprowadź poniżej dane, aby utworzyć konto",
+    "orContinueWith": "Lub utwórz konto przez",
+    "haveAccount": "Masz już konto?",
+    "signInLink": "Zaloguj się",
+    "terms": "Rejestrując się, zgadzasz się na nasze",
+    "termsLink": "Warunki korzystania z usługi",
+    "privacyLink": "Politykę prywatności",
+    "and": "oraz"
+}

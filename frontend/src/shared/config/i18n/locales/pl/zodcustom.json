@@ -1,0 +1,11 @@
+{
+    "errors": {
+        "password": {
+            "mismatch": "Hasła nie są zgodne",
+            "lowercase": "Dodaj małą literę",
+            "uppercase": "Dodaj wielką literę",
+            "number": "Dodaj cyfrę",
+            "special": "Dodaj znak specjalny #?!@$%^&*-"
+        }
+    }
+}

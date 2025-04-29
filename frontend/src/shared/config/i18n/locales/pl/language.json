@@ -1,0 +1,10 @@
+{
+    "locales": {
+        "en": "Angielski",
+        "pl": "Polski"
+    },
+    "buttons": {
+        "toggle": "Zmień język"
+    }
+}
+
