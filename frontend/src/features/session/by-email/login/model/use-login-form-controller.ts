@@ -1,14 +1,13 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
-import { signIn } from 'next-auth/react';
 import { useCallback } from 'react';
-import { toast } from 'sonner';
+
+import { useLoginWithCredentialsMutation } from './use-login-with-credentials-mutation';
 
 import type { LoginFormData } from './login.schema';
 
 interface LoginControllerProps {
-    onComplete?: () => void | unknown;
+    onComplete?: () => void;
 }
 
 export const useLoginFormController = ({
@@ -16,38 +15,13 @@ export const useLoginFormController = ({
 }: LoginControllerProps): {
     handleSubmit: (data: LoginFormData) => Promise<void>;
 } => {
-    const { mutate: login } = useMutation({
-        mutationFn: async (data: LoginFormData) => {
-            const response = await signIn('credentials', {
-                ...data,
-                callbackUrl: '/',
-                redirect: true,
-            });
-
-            if (!response?.ok) {
-                throw new Error(response?.error || 'Failed to login');
-            }
-
-            return response;
-        },
+    const { mutate: login } = useLoginWithCredentialsMutation({
         onSuccess: () => {
             onComplete?.();
         },
-        onError: (error: Error) => {
-            toast.error(JSON.stringify(error));
-        },
     });
 
-    const handleSubmit = useCallback(
-        async (data: LoginFormData) => {
-            try {
-                login(data);
-            } catch (error) {
-                toast.error(JSON.stringify(error));
-            }
-        },
-        [login]
-    );
+    const handleSubmit = useCallback(async (data: LoginFormData) => login(data), [login]);
 
     return { handleSubmit };
 };

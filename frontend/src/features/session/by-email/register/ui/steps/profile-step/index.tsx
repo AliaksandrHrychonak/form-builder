@@ -1,12 +1,13 @@
 'use client';
 
-import { useMultiStepFormContext, FormFieldProvider } from '@shared/lib';
-import { Form, FormControl, FormItem, FormLabel, FormMessage, Input, Button } from '@shared/ui';
+import { FormFieldProvider, useClientTranslation, useMultiStepFormContext } from '@shared/lib';
+import { Button, Form, FormControl, FormItem, FormLabel, FormMessage, Input } from '@shared/ui';
 
 import type { JSX } from 'react';
 
 export const ProfileStep = (): JSX.Element => {
     const { form, nextStep, isStepValid, prevStep } = useMultiStepFormContext();
+    const { t } = useClientTranslation('auth');
     return (
         <Form {...form}>
             <div className='flex flex-col gap-4'>
@@ -14,7 +15,7 @@ export const ProfileStep = (): JSX.Element => {
                     name='profileInfo.firstName'
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>First Name</FormLabel>
+                            <FormLabel>{t('fields.firstName')}</FormLabel>
                             <FormControl>
                                 <Input type='text' {...field} />
                             </FormControl>
@@ -26,7 +27,7 @@ export const ProfileStep = (): JSX.Element => {
                     name='profileInfo.lastName'
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Last Name</FormLabel>
+                            <FormLabel>{t('fields.lastName')}</FormLabel>
                             <FormControl>
                                 <Input type='text' {...field} />
                             </FormControl>
@@ -36,10 +37,10 @@ export const ProfileStep = (): JSX.Element => {
                 />
                 <footer className='flex justify-end space-x-2'>
                     <Button type='button' variant='outline' onClick={prevStep}>
-                        Back
+                        {t('buttons.back')}
                     </Button>
                     <Button type='button' onClick={nextStep} disabled={!isStepValid()}>
-                        Next
+                        {t('buttons.next')}
                     </Button>
                 </footer>
             </div>

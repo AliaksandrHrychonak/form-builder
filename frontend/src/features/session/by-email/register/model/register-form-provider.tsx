@@ -28,7 +28,7 @@ export const RegisterFormProvider: FC<UserCreateProviderProps> = ({ onComplete, 
     const { handleSubmit } = useRegisterFormController({
         onComplete: () => {
             onComplete?.();
-            // form.reset();
+            form.reset();
         },
     });
 
