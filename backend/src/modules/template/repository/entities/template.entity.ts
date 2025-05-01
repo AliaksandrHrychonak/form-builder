@@ -35,7 +35,7 @@ export class TemplateEntity extends DatabaseMongoUUIDEntityAbstract {
         enum: Object.values(ENUM_TEMPLATE_TOPIC),
         index: true,
     })
-    topic?: string[];
+    topics?: string[];
 
     @Prop({
         required: true,

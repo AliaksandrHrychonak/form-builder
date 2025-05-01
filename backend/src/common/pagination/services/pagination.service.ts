@@ -118,6 +118,17 @@ export class PaginationService implements IPaginationService {
         };
     }
 
+    filterNin<T = string>(
+        field: string,
+        filterValue: T[]
+    ): Record<string, any> {
+        return {
+            [field]: {
+                $nin: filterValue,
+            },
+        };
+    }
+
     filterDate(field: string, filterValue: Date): Record<string, Date> {
         return {
             [field]: filterValue,

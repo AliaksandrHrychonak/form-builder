@@ -17,6 +17,7 @@ interface IElasticsearchRequest {
         availableOrderBy: string[];
         availableOrderDirection: ENUM_ELASTICSEARCH_ORDER_DIRECTION_TYPE[];
     };
+    filters?: Record<string, any>;
 }
 
 export interface IRequestApp<

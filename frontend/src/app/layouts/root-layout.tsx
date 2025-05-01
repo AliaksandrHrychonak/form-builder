@@ -1,6 +1,7 @@
 import '../styles/global.css';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import { WithZodClient } from '@/app/providers/with-zod-provider';
 import { languages } from '@shared/config';
 import { Toaster } from '@shared/ui';
 
@@ -37,10 +38,17 @@ export const RootLayout: FC<RootLayoutProps> = async ({ children, params }) => {
                 className={`${geistSans.variable} ${geistMono.variable} bg-background min-h-svh font-sans antialiased select-none flex flex-col`}
             >
                 <WithQueryClient>
-                    <WithThemeProvider attribute='class' defaultTheme='light' enableSystem disableTransitionOnChange>
-                        <WithAuthProvider>{children}</WithAuthProvider>
-                    </WithThemeProvider>
-                    <Toaster />
+                    <WithZodClient>
+                        <WithThemeProvider
+                            attribute='class'
+                            defaultTheme='light'
+                            enableSystem
+                            disableTransitionOnChange
+                        >
+                            <WithAuthProvider>{children}</WithAuthProvider>
+                        </WithThemeProvider>
+                        <Toaster />
+                    </WithZodClient>
                 </WithQueryClient>
             </body>
         </html>

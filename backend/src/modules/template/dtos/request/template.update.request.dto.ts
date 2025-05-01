@@ -5,7 +5,7 @@ import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class TemplateUpdateRequestDto extends PickType(
     TemplateCreateRequestDto,
-    ['title', 'description', 'isPublic', 'sharedUsers', 'topic'] as const
+    ['title', 'description', 'isPublic', 'sharedUsers', 'topics'] as const
 ) {
     @ApiProperty({
         example: [faker.string.uuid()],

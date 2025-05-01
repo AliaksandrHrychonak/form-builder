@@ -27,7 +27,6 @@ export class TemplateSearchService implements OnModuleInit {
                 index: this.INDEX_NAME,
                 mappings: {
                     properties: {
-                        _id: { type: 'keyword' },
                         title: {
                             type: 'text',
                             fields: {
@@ -35,7 +34,9 @@ export class TemplateSearchService implements OnModuleInit {
                             },
                         },
                         description: { type: 'text' },
-                        topic: { type: 'keyword' },
+                        topics: {
+                            type: 'keyword',
+                        },
                         isPublic: { type: 'boolean' },
                         createdAt: { type: 'date' },
                         updatedAt: { type: 'date' },
@@ -184,7 +185,7 @@ export class TemplateSearchService implements OnModuleInit {
             title: template.title,
             description: template.description,
             isPublic: template.isPublic,
-            topic: template.topic,
+            topics: template.topics,
             createdAt: template.createdAt,
             updatedAt: template.updatedAt,
             owner: {
@@ -202,7 +203,12 @@ export class TemplateSearchService implements OnModuleInit {
             popularityScore: 0,
             questions: [],
             comments: [],
-            tags: [],
+            tags: template.tags.map(tag => ({
+                _id: tag._id,
+                name: tag.name,
+                description: tag.description,
+                color: tag.color,
+            })),
         } as ITemplateSearchDoc;
 
         return await this.elasticsearchService.index({
@@ -377,5 +383,9 @@ export class TemplateSearchService implements OnModuleInit {
                 },
             },
         });
+    }
+
+    async deleteAllIndices(): Promise<void> {
+        await this.elasticsearchService.deleteAllIndices();
     }
 }

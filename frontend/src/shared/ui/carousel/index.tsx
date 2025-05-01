@@ -238,4 +238,4 @@ const CarouselNext = ({ className, variant = 'outline', size = 'icon', ...props 
     );
 };
 
-export { type CarouselApi, Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext };
+export { Carousel, type CarouselApi, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext };

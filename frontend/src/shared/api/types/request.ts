@@ -6,3 +6,9 @@ export interface IRequestSignUp {
     email: string;
     password: string;
 }
+
+export interface IRequestPaging {
+    search?: string;
+    page?: number;
+    perPage?: number;
+}
