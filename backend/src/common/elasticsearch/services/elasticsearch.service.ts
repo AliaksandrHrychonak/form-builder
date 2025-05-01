@@ -126,4 +126,17 @@ export class ElasticsearchService {
 
         return await this.elasticsearchService.update(updateParams);
     }
+
+    async deleteAllIndices(): Promise<void> {
+        const indices = await this.elasticsearchService.cat.indices({
+            format: 'json',
+        });
+        const indexNames = indices.map(index => index.index);
+
+        if (indexNames.length > 0) {
+            await this.elasticsearchService.indices.delete({
+                index: indexNames,
+            });
+        }
+    }
 }
