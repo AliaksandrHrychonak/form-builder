@@ -3,6 +3,7 @@ import { TemplateTagCreateRequestDto } from 'src/modules/template/dtos/request/t
 import { ITemplateTagService } from 'src/modules/template/interfaces/template-tag.service.interface';
 import { TemplateTagRepository } from 'src/modules/template/repository/repositories/template-tag.repository';
 import {
+    IDatabaseCreateManyOptions,
     IDatabaseCreateOptions,
     IDatabaseExistOptions,
     IDatabaseFindAllOptions,
@@ -35,6 +36,20 @@ export class TemplateTagService implements ITemplateTagService {
 
         return this.templateTagRepository.create<TemplateTagEntity>(
             create,
+            options
+        );
+    }
+
+    async createMany(
+        tags: Array<{
+            name: string;
+            description?: string;
+            color: string;
+        }>,
+        options?: IDatabaseCreateManyOptions
+    ): Promise<boolean> {
+        return this.templateTagRepository.createMany<TemplateTagEntity>(
+            tags as TemplateTagEntity[],
             options
         );
     }
@@ -101,5 +116,9 @@ export class TemplateTagService implements ITemplateTagService {
             TemplateTagListResponseDto,
             tag.map(u => u.toObject())
         );
+    }
+
+    async deleteBulk(): Promise<boolean> {
+        return this.templateTagRepository.deleteMany({});
     }
 }

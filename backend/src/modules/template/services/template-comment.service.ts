@@ -67,4 +67,8 @@ export class TemplateCommentService implements ITemplateCommentService {
 
         return this.templateCommentRepository.updateMany(find, data, options);
     }
+
+    async deleteBulk(): Promise<boolean> {
+        return this.templateCommentRepository.deleteMany({});
+    }
 }

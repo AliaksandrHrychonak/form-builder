@@ -158,4 +158,8 @@ export class TemplateFormService implements ITemplateFormService {
 
         return this.templateFormRepository.updateMany(find, data, options);
     }
+
+    async deleteBulk(): Promise<boolean> {
+        return this.templateFormRepository.deleteMany({});
+    }
 }
