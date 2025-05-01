@@ -1,5 +1,6 @@
 import { generateLocalizedMetadata } from '@shared/lib';
 import { Header } from '@widgets/header';
+import { TemplateSearchPreviewList } from '@widgets/template-preview-list';
 import { TemplateSearchBar } from '@widgets/template-search-bar';
 
 import type { Metadata } from 'next';
@@ -18,6 +19,7 @@ export const MainPage: FC = async (): Promise<JSX.Element> => {
             <Header />
             <main>
                 <TemplateSearchBar />
+                <TemplateSearchPreviewList />
             </main>
         </>
     );
