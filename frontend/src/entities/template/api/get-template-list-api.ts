@@ -8,6 +8,7 @@ export const getTemplateListApi = async (
     params: IBaseSearchTemplateFilters
 ): Promise<IResponseElasticsearch<ISearchTemplate[]>> => {
     const searchParams = transformSearchTemplateFiltersToParams(params);
+    console.log(searchParams.toString());
     const response = await baseApi.get<IResponseElasticsearch<ISearchTemplate[]>>(
         `/public/template/list?${searchParams.toString()}`
     );
