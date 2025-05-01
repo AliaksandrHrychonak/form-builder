@@ -14,12 +14,15 @@ export enum ENUM_POLICY_SUBJECT {
     SETTING = 'SETTING',
     ROLE = 'ROLE',
     USER = 'USER',
+    TEMPLATE = 'TEMPLATE',
 }
 
 export enum ENUM_POLICY_ROLE_TYPE {
     SUPER_ADMIN = 'SUPER_ADMIN',
     ADMIN = 'ADMIN',
     USER = 'USER',
+    PUBLIC = 'PUBLIC',
+    MEMBER = 'MEMBER',
 }
 
 export interface IPermission {
