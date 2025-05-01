@@ -3,13 +3,11 @@
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
-
 import { themeOptions } from '@shared/config';
 import { useClientTranslation } from '@shared/lib';
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@shared/ui';
 
 import type { ComponentProps, FC, JSX } from 'react';
-
 
 interface ThemeSwitcherProps extends ComponentProps<typeof DropdownMenu> {}
 
@@ -27,7 +25,7 @@ export const ThemeSwitcher: FC<ThemeSwitcherProps> = (): JSX.Element => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
                 {themeOptions.map((option) => (
-                    <DropdownMenuItem key={option.value} onClick={() => setTheme(option.value)}>
+                    <DropdownMenuItem key={option.value} onClick={() => setTheme(option.value)} className='w-full'>
                         {t(`options.${option.label}`)}
                     </DropdownMenuItem>
                 ))}
