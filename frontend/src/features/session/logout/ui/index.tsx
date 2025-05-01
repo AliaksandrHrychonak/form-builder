@@ -13,7 +13,11 @@ import type { JSX } from 'react';
 export const DropdownMenuItemLogout = (): JSX.Element => {
     const { t } = useClientTranslation('auth');
     const { mutate: logout } = useLogoutMutation({
-        onSuccess: () => window.location.reload(),
+        onSuccess: () => {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.reload();
+        },
     });
     return (
         <DropdownMenuItem onClick={() => logout({})}>
