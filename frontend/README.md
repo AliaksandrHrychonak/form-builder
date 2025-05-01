@@ -75,6 +75,8 @@ pnpm prepare      # Setup husky
 
 ## Architecture
 
+![2025-05-01_16-25-00](https://github.com/user-attachments/assets/fc7a234a-08df-425a-8a7b-b46b8e4e579d)
+
 The project follows Feature-Sliced Design (FSD) methodology:
 
 - `app` - Application initialization logic
