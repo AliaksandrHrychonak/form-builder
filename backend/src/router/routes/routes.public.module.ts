@@ -10,6 +10,7 @@ import { UserModule } from 'src/modules/user/user.module';
 import { TemplateModule } from '../../modules/template/template.module';
 import { TemplatePublicController } from '../../modules/template/controllers/template.public.controller';
 import { PaginationModule } from '../../common/pagination/pagination.module';
+import { TemplateTagPublicController } from '../../modules/template/controllers/template-tag.public.controller';
 
 @Module({
     controllers: [
@@ -17,6 +18,7 @@ import { PaginationModule } from '../../common/pagination/pagination.module';
         SettingPublicController,
         UserPublicController,
         TemplatePublicController,
+        TemplateTagPublicController,
     ],
     providers: [],
     exports: [],

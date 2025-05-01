@@ -12,6 +12,8 @@ import { UserAdminController } from 'src/modules/user/controllers/user.admin.con
 import { UserModule } from 'src/modules/user/user.module';
 import { TemplateAdminController } from '../../modules/template/controllers/template.admin.controller';
 import { TemplateModule } from '../../modules/template/template.module';
+import { TemplateTagAdminController } from '../../modules/template/controllers/template-tag.admin.controller';
+
 @Module({
     controllers: [
         ApiKeyAdminController,
@@ -19,6 +21,7 @@ import { TemplateModule } from '../../modules/template/template.module';
         RoleAdminController,
         UserAdminController,
         TemplateAdminController,
+        TemplateTagAdminController,
     ],
     providers: [],
     exports: [],
