@@ -13,6 +13,7 @@ import { PaginationFilterStringContainPipe } from 'src/common/pagination/pipes/p
 import { PaginationOrderPipe } from 'src/common/pagination/pipes/pagination.order.pipe';
 import { PaginationPagingPipe } from 'src/common/pagination/pipes/pagination.paging.pipe';
 import { PaginationSearchPipe } from 'src/common/pagination/pipes/pagination.search.pipe';
+import { PaginationFilterNinIdsPipe } from '../pipes/pagination.filter-nin-ids.pipe';
 
 //! Pagination query helper
 export function PaginationQuery(
@@ -51,6 +52,17 @@ export function PaginationQueryFilterInEnum<T>(
     return Query(
         options?.queryField ?? field,
         PaginationFilterInEnumPipe<T>(field, defaultValue, defaultEnum, options)
+    );
+}
+
+//! Pagination query filter nin will convert into repository
+export function PaginationQueryFilterNinIds(
+    field: string,
+    options?: IPaginationFilterOptions
+): ParameterDecorator {
+    return Query(
+        options?.queryField ?? field,
+        PaginationFilterNinIdsPipe(field, options)
     );
 }
 
