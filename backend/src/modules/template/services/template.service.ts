@@ -131,4 +131,8 @@ export class TemplateService implements ITemplateService {
 
         return this.templateRepository.updateMany(find, data, options);
     }
+
+    async deleteBulk(): Promise<boolean> {
+        return this.templateRepository.deleteMany({});
+    }
 }

@@ -22,7 +22,7 @@ export const Config = {
     UI_MOBILE_BREAKPOINT: Number(process.env.NEXT_PUBLIC_UI_MOBILE_BREAKPOINT) ?? 768,
     TEMPLATE: {
         SEARCH_DEFAULT_ORDER_DIRECTION_TYPE: ['asc', 'desc'],
-        SEARCH_DEFAULT_ORDER_BY: ['createdAt', 'title', 'popularityScore', 'updatedAt', '_score'],
+        SEARCH_DEFAULT_ORDER_BY: ['createdAt', 'popularityScore', 'updatedAt', '_score'],
         SEARCH_DEFAULT_TEMPLATE_TOPICS: ['SURVEY', 'QUIZ', 'FEEDBACK', 'APPLICATION'],
         SEARCH_DEFAULT_PAGE_SIZE: 10,
     },

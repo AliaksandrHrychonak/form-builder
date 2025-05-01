@@ -31,7 +31,7 @@ export const LanguageSwitcher: FC<LanguageSwitcherProps> = ({ ...props }): JSX.E
                     .filter((locale) => locale !== currentLanguage)
                     .map((locale) => (
                         <DropdownMenuItem key={locale}>
-                            <LinkBase lng={locale} href={pathnameWithoutLocale}>
+                            <LinkBase lng={locale} href={pathnameWithoutLocale} className='w-full'>
                                 {t(getLocaleKey(locale))}
                             </LinkBase>
                         </DropdownMenuItem>

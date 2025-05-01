@@ -19,7 +19,7 @@ export const transformSearchTemplateFiltersToParams = <R extends ENUM_POLICY_ROL
     if (orderDirection) params.append('orderDirection', orderDirection);
 
     if (topics?.length) params.append('topics', topics.join(','));
-    if (tags?.length) params.append('tags', tags.join(','));
+    if (tags?.length) params.append('tags', tags.map((i) => i._id).join(','));
 
     return params;
 };

@@ -55,4 +55,8 @@ export class TemplateLikeService implements ITemplateLikeService {
 
         return this.templateLikeRepository.updateMany(find, data, options);
     }
+
+    async deleteBulk(): Promise<boolean> {
+        return this.templateLikeRepository.deleteMany({});
+    }
 }

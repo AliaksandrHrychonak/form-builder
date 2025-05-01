@@ -178,4 +178,8 @@ export class TemplateQuestionService implements ITemplateQuestionService {
 
         return this.templateQuestionRepository.updateMany(find, data, options);
     }
+
+    async deleteBulk(): Promise<boolean> {
+        return this.templateQuestionRepository.deleteMany({});
+    }
 }

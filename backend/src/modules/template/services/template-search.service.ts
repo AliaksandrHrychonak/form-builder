@@ -29,9 +29,6 @@ export class TemplateSearchService implements OnModuleInit {
                     properties: {
                         title: {
                             type: 'text',
-                            fields: {
-                                keyword: { type: 'keyword' },
-                            },
                         },
                         description: { type: 'text' },
                         topics: {
@@ -385,7 +382,10 @@ export class TemplateSearchService implements OnModuleInit {
         });
     }
 
-    async deleteAllIndices(): Promise<void> {
-        await this.elasticsearchService.deleteAllIndices();
+    async deleteIndices(): Promise<void> {
+        await this.elasticsearchService.deleteIndices({
+            index: TemplateDatabaseName,
+            ignore_unavailable: true,
+        });
     }
 }

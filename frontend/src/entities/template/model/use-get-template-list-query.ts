@@ -1,22 +1,32 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { useSearchTemplateStore } from '@entities/template';
 import { getTemplateListApi } from '@entities/template/api';
 import { TEMPLATES_TAG } from '@shared/api';
 
-import type { ENUM_POLICY_ROLE_TYPE, IErrorException, IResponseElasticsearch, ISearchTemplate } from '@shared/api';
+import type {
+    ENUM_POLICY_ROLE_TYPE,
+    IErrorException,
+    IResponseElasticsearch,
+    IRoleBasedSearchTemplateFilters,
+    ISearchTemplate,
+} from '@shared/api';
 import type { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 
-export const useGetTemplateListQuery = (
-    role: ENUM_POLICY_ROLE_TYPE
-): UseInfiniteQueryResult<
+interface UseGetTemplateListQueryProps<R extends ENUM_POLICY_ROLE_TYPE> {
+    filters: IRoleBasedSearchTemplateFilters<R>;
+    enabled?: boolean;
+}
+
+export const useGetTemplateListQuery = <R extends ENUM_POLICY_ROLE_TYPE>({
+    filters,
+    enabled,
+}: UseGetTemplateListQueryProps<R>): UseInfiniteQueryResult<
     InfiniteData<IResponseElasticsearch<ISearchTemplate[]>, unknown>,
     AxiosError<IErrorException>
 > => {
-    const filters = useSearchTemplateStore(role).getState().filters;
-
     return useInfiniteQuery({
+        enabled,
         queryKey: [TEMPLATES_TAG, filters],
         queryFn: ({ pageParam = filters.page }) =>
             getTemplateListApi({

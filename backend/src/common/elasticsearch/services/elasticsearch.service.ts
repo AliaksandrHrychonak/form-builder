@@ -3,11 +3,13 @@ import { ElasticsearchService as BaseElasticsearchService } from '@nestjs/elasti
 import {
     IndexRequest,
     IndicesCreateRequest,
+    IndicesDeleteRequest,
     IndicesExistsRequest,
     SearchRequest,
     SearchResponse,
 } from '@elastic/elasticsearch/lib/api/types';
 import { IElasticsearchPagination } from '../interfaces/elasticsearch.interface';
+import { TransportRequestOptionsWithOutMeta } from '@elastic/elasticsearch';
 
 @Injectable()
 export class ElasticsearchService {
@@ -127,16 +129,10 @@ export class ElasticsearchService {
         return await this.elasticsearchService.update(updateParams);
     }
 
-    async deleteAllIndices(): Promise<void> {
-        const indices = await this.elasticsearchService.cat.indices({
-            format: 'json',
-        });
-        const indexNames = indices.map(index => index.index);
-
-        if (indexNames.length > 0) {
-            await this.elasticsearchService.indices.delete({
-                index: indexNames,
-            });
-        }
+    async deleteIndices(
+        params: IndicesDeleteRequest,
+        options?: TransportRequestOptionsWithOutMeta
+    ): Promise<void> {
+        await this.elasticsearchService.indices.delete(params, options);
     }
 }
