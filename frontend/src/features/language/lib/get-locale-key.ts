@@ -1,3 +1,5 @@
+// TODO fix localeKeys cast
+
 const localeKeys = {
     en: 'locales.en',
     pl: 'locales.pl',
