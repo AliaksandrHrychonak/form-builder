@@ -1,12 +1,10 @@
-# Project Name
-
-Project description goes here...
+# Form builder
 
 ## Live Demo
 
-🌐 **Production Frontend Demo**: [demo.example.com](https://form-builder.monster)
+🌐 **Production Frontend Demo**: [form-builder.monster](https://form-builder.monster)
 
-🌐 **API Docs**: [demo.example.com](https://form-builder.monster/form-builder-backend/docs)
+🌐 **API Docs**: [form-builder.monster/form-builder-backend/docs](https://form-builder.monster/form-builder-backend/docs)
 
 ### Demo Credentials
 
