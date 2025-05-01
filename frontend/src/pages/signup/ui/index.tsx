@@ -1,6 +1,6 @@
 import { generateLocalizedMetadata } from '@shared/lib';
 import { Logo } from '@shared/ui';
-import { SignUp } from '@widgets/signup/ui';
+import { SignUp } from '@widgets/signup';
 
 import type { Metadata } from 'next';
 import type { FC, JSX } from 'react';

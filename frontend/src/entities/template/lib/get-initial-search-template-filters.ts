@@ -9,7 +9,7 @@ export const getInitialSearchTemplateFilters = <R extends ENUM_POLICY_ROLE_TYPE>
     role: R
 ): IRoleBasedSearchTemplateFilters<R> => {
     const base: IBaseSearchTemplateFilters = {
-        orderBy: 'createdAt',
+        orderBy: 'popularityScore',
         orderDirection: 'desc',
         page: 1,
         perPage: TEMPLATE.SEARCH_DEFAULT_PAGE_SIZE,

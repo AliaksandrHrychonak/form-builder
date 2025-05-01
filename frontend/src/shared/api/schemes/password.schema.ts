@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 export const passwordSchema = z
     .string()
-    .min(4)
+    .min(8)
     .refine((value: string) => value.trim().length > 0);
 
 export const validatePassword = (_password: string, _ctx: z.RefinementCtx): void => {
