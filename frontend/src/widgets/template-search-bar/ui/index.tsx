@@ -70,7 +70,7 @@ export const TemplateSearchBar = (): JSX.Element => {
     return (
         <Form {...form}>
             <form noValidate className='w-full flex size-full flex-col gap-8 my-8' onSubmit={(e) => e.preventDefault()}>
-                <div className='flex items-center justify-between gap-2 mx-[50px] w-[calc(100%-100px)] py-1'>
+                <div className='flex items-center justify-between max-[850px]:flex-col-reverse max-[850px]:items-start gap-8 mx-[50px] w-[calc(100%-100px)] max-[850px]:mx-[10px] max-[850px]:w-[calc(100%-20px)] py-1'>
                     <TemplateSearchTopicsFilter<typeof role>
                         control={form.control}
                         isMultipleChoice={false}

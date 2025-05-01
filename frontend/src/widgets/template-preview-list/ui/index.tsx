@@ -62,7 +62,7 @@ export const TemplateSearchPreviewList = (): JSX.Element => {
 
     if (!data?.pages?.[0]?.data?.length) {
         return (
-            <section className='flex items-center justify-center p-58 text-muted-foreground'>{t('notFound')}</section>
+            <section className='flex items-center justify-center pt-58 text-muted-foreground'>{t('notFound')}</section>
         );
     }
 

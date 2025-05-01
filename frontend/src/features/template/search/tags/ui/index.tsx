@@ -92,7 +92,7 @@ export const TemplateSearchTagsFilter = <TRole extends ENUM_POLICY_ROLE_TYPE>({
                     onChange(newTags, { shouldDirty: true, shouldTouch: true });
                 };
                 return (
-                    <FormItem className='flex flex-wrap gap-2 mx-[50px] w-[calc(100%-100px)] py-1'>
+                    <FormItem className='flex flex-wrap gap-2 mx-[50px] w-[calc(100%-100px)] max-[850px]:mx-[10px] max-[850px]:w-[calc(100%-20px)] py-1'>
                         {isLoading && (
                             <>
                                 <Skeleton className='h-9 w-30' />
