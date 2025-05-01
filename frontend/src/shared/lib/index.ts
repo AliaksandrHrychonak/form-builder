@@ -6,3 +6,4 @@ export * from './i18n';
 export * from './meta';
 export * from './multi-step-form';
 export * from './dialog';
+export * from './color';
