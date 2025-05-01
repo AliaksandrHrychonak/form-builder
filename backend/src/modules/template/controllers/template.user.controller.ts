@@ -9,6 +9,7 @@ import {
     Param,
     Patch,
     Post,
+    Query,
 } from '@nestjs/common';
 import { DatabaseConnection } from '../../../common/database/decorators/database.decorator';
 import { TemplateService } from '../services/template.service';
@@ -61,6 +62,7 @@ import { TemplateCommentService } from '../services/template-comment.service';
 import { TemplateLikeService } from '../services/template-like.service';
 import { TemplateTagService } from '../services/template-tag.service';
 import { TemplateAccessSharedPipe } from '../pipes/template.access-shared.pipe';
+import { ElasticsearchFilterInPipe } from '../../../common/elasticsearch/pipes/elasticsearch.filter-in.pipe';
 
 @ApiTags('modules.template.user')
 @Controller({
@@ -98,13 +100,23 @@ export class TemplateUserController {
             defaultOrderDirection: ENUM_ELASTICSEARCH_ORDER_DIRECTION_TYPE.DESC,
             availableOrderBy: TEMPLATE_DEFAULT_USER_AVAILABLE_ORDER_BY,
         })
-        { _elasticQuery, _limit, _offset, _order }: ElasticsearchListDto
+        { _elasticQuery, _limit, _offset, _order }: ElasticsearchListDto,
+        @Query(
+            'tags',
+            ElasticsearchFilterInPipe('tags', { fieldPath: 'tags._id' })
+        )
+        tagsFilter: Record<string, any>,
+        @Query('topics', ElasticsearchFilterInPipe('topics'))
+        topicsFilter: Record<string, any>
     ): Promise<IResponseElasticsearch<ITemplateSearchDoc>> {
         const filters = {
+            filter: [
+                ...(tagsFilter._elasticQuery?.filter || []),
+                ...(topicsFilter._elasticQuery?.filter || []),
+            ],
             should: [
                 { term: { 'owner._id': user._id } },
                 { term: { 'sharedUsers._id': user._id } },
-                { term: { isPublic: true } },
             ],
             minimumShouldMatch: 1,
         };
@@ -120,7 +132,10 @@ export class TemplateUserController {
 
         return {
             data: items,
-            _pagination: { total, totalPage },
+            _pagination: {
+                total,
+                totalPage,
+            },
         };
     }
 
@@ -168,21 +183,33 @@ export class TemplateUserController {
             description,
             isPublic,
             sharedUsers,
-            topic,
+            topics,
+            tags,
         }: TemplateCreateRequestDto,
         @User() user: UserDoc
     ): Promise<IResponse<DatabaseIdResponseDto>> {
         const uniqueSharedUsersIds = [...new Set(sharedUsers)];
-        const uniqueTopic = [...new Set(topic)];
+        const uniqueTopics = [...new Set(topics)];
+        const uniqueTags = [...new Set(tags)];
 
         const checkUsers =
             await this.userService.existsByIds(uniqueSharedUsersIds);
+        const checkTags =
+            await this.templateTagService.existsByIds(uniqueSharedUsersIds);
 
         if (!checkUsers) {
             throw new NotFoundException({
                 statusCode:
                     ENUM_TEMPLATE_STATUS_CODE_ERROR.NOT_FOUND_SHARED_USERS_ERROR,
                 message: 'template.error.notFoundSharedUsers',
+            });
+        }
+
+        if (!checkTags) {
+            throw new NotFoundException({
+                statusCode:
+                    ENUM_TEMPLATE_STATUS_CODE_ERROR.NOT_FOUND_SHARED_USERS_ERROR,
+                message: 'template.error.notTags',
             });
         }
 
@@ -198,7 +225,8 @@ export class TemplateUserController {
                     isPublic,
                     owner: user._id,
                     sharedUsers: uniqueSharedUsersIds,
-                    topic: uniqueTopic,
+                    topics: uniqueTopics,
+                    tags: uniqueTags,
                 },
                 { session }
             );
