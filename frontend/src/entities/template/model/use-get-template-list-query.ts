@@ -14,7 +14,7 @@ export const useGetTemplateListQuery = (
     InfiniteData<IResponseElasticsearch<ISearchTemplate[]>, unknown>,
     AxiosError<IErrorException>
 > => {
-    const filters = useSearchTemplateStore(role).filters;
+    const filters = useSearchTemplateStore(role).getState().filters;
 
     return useInfiniteQuery({
         queryKey: [TEMPLATES_TAG, filters],
