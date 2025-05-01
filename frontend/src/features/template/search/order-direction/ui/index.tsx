@@ -49,7 +49,7 @@ export const TemplateSearchOrderDirectionFilter = <TRole extends ENUM_POLICY_ROL
             name={'orderDirection' as FieldPath<IRoleBasedSearchTemplateFilters<TRole>>}
             render={({ field: { onChange, value, ...fieldProps } }) => (
                 <FormItem className='min-w-[140px]'>
-                    <Select onValueChange={onChange} defaultValue={String(value) ?? 'asc'} {...fieldProps}>
+                    <Select onValueChange={onChange} defaultValue={String(value)} {...fieldProps}>
                         <FormControl>
                             <SelectTrigger className='flex items-center gap-1'>
                                 <DirectionIcon direction={value as OrderDirectionSearchTemplateByField} />
