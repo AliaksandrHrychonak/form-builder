@@ -1,7 +1,6 @@
 export const TEMPLATE_DEFAULT_PUBLIC_ORDER_BY = 'createdAt';
 export const TEMPLATE_DEFAULT_PUBLIC_AVAILABLE_ORDER_BY = [
     'createdAt',
-    'title',
     'popularityScore',
     'updatedAt',
     '_score',
@@ -26,7 +25,6 @@ export const TEMPLATE_DEFAULT_PUBLIC_AVAILABLE_SEARCH = [
 export const TEMPLATE_DEFAULT_USER_ORDER_BY = 'createdAt';
 export const TEMPLATE_DEFAULT_USER_AVAILABLE_ORDER_BY = [
     'createdAt',
-    'title',
     'popularityScore',
     'updatedAt',
     '_score',
@@ -52,7 +50,6 @@ export const TEMPLATE_DEFAULT_USER_AVAILABLE_SEARCH = [
 export const TEMPLATE_DEFAULT_ADMIN_ORDER_BY = 'createdAt';
 export const TEMPLATE_DEFAULT_ADMIN_AVAILABLE_ORDER_BY = [
     'createdAt',
-    'title',
     'popularityScore',
     'updatedAt',
     '_score',
