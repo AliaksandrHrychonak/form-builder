@@ -1,0 +1,34 @@
+{
+    "fields": {
+        "orderBy": {
+            "placeholder": "Sortuj według",
+            "options": {
+                "createdAt": "Data utworzenia",
+                "title": "Tytuł",
+                "popularityScore": "Popularność",
+                "updatedAt": "Data aktualizacji",
+                "_score": "Trafność"
+            }
+        },
+        "orderDirection": {
+            "placeholder": "Kierunek sortowania",
+            "options": {
+                "asc": "Rosnąco",
+                "desc": "Malejąco"
+            }
+        },
+        "search": {
+            "placeholder": "Szukaj szablonów...",
+            "noResults": "Nie znaleziono",
+            "error": "Wystąpił błąd podczas wyszukiwania",
+            "tryAgain": "Spróbuj ponownie później"
+        },
+        "tags": {
+            "placeholder": "Szukaj tagów..."
+        }
+    },
+    "SURVEY": "Ankieta",
+    "QUIZ": "Quiz",
+    "FEEDBACK": "Opinie",
+    "APPLICATION": "Aplikacja"
+}

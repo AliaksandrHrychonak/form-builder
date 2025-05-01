@@ -1,0 +1,34 @@
+{
+    "fields": {
+        "orderBy": {
+            "placeholder": "Sort by",
+            "options": {
+                "createdAt": "Created Date",
+                "title": "Title",
+                "popularityScore": "Popularity",
+                "updatedAt": "Updated Date",
+                "_score": "Relevance"
+            }
+        },
+        "orderDirection": {
+            "placeholder": "Sort direction",
+            "options": {
+                "asc": "Ascending",
+                "desc": "Descending"
+            }
+        },
+        "search": {
+            "placeholder": "Search templates...",
+            "noResults": "No found",
+            "error": "An error occurred while searching",
+            "tryAgain": "Please try again later"
+        },
+        "tags": {
+            "placeholder": "Search tags..."
+        }
+    },
+    "SURVEY": "Survey",
+    "QUIZ": "Quiz",
+    "FEEDBACK": "FEEDBACK",
+    "APPLICATION": "APPLICATION"
+}
