@@ -14,6 +14,7 @@ import { SettingModule } from 'src/modules/setting/setting.module';
 import { UserModule } from 'src/modules/user/user.module';
 import { TemplateModule } from '../modules/template/template.module';
 import { ElasticsearchModule } from '../common/elasticsearch/elasticsearch.module';
+import { MigrationTemplateSeed } from 'src/migration/seeds/migration.template.seed';
 
 @Module({
     imports: [
@@ -36,6 +37,7 @@ import { ElasticsearchModule } from '../common/elasticsearch/elasticsearch.modul
         MigrationUserSeed,
         MigrationRoleSeed,
         MigrationSettingSeed,
+        MigrationTemplateSeed,
     ],
     exports: [],
 })
