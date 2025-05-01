@@ -7,6 +7,7 @@ import { cookieName, fallbackLng, headerName, languages } from '@shared/config';
 import type { NextRequest } from 'next/server';
 import type { NextRequestWithAuth } from 'next-auth/middleware';
 
+
 acceptLanguage.languages(languages);
 
 function handleLocalization(req: NextRequest): NextResponse<unknown> {

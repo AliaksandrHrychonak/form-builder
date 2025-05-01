@@ -8,11 +8,13 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useStore } from 'zustand';
 
 import { useSearchTemplateStore } from '@entities/template';
-import { TemplateSearchOrderByFilter } from '@features/template/search/order-by-filter';
-import { TemplateSearchOrderDirectionFilter } from '@features/template/search/order-direction-filter';
-import { TemplateSearchQueryFilter } from '@features/template/search/query-filter';
-import { TemplateSearchTagsFilter } from '@features/template/search/tags-filter';
-import { TemplateSearchTopicsFilter } from '@features/template/search/topics-filter';
+import {
+    TemplateSearchOrderByFilter,
+    TemplateSearchOrderDirectionFilter,
+    TemplateSearchQueryFilter,
+    TemplateSearchTagsFilter,
+    TemplateSearchTopicsFilter,
+} from '@features/template';
 import { ENUM_POLICY_ROLE_TYPE } from '@shared/api';
 import { Form } from '@shared/ui';
 
