@@ -1,13 +1,12 @@
 'use client';
 
-import chroma from 'chroma-js';
 import { Check, SettingsIcon, X } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useGetTemplateTagListQuery, useSearchTemplateTagStore } from '@entities/template-tag';
-import { cn, FormFieldProvider, useClientTranslation } from '@shared/lib';
+import { cn, FormFieldProvider, getLuminanceColor, useClientTranslation } from '@shared/lib';
 import {
     Badge,
     Button,
@@ -84,15 +83,6 @@ export const TemplateSearchTagsFilter = <TRole extends ENUM_POLICY_ROLE_TYPE>({
         name: 'tags' as FieldPath<IRoleBasedSearchTemplateFilters<TRole>>,
     }) as Array<ITemplateTag>;
 
-    const getTextColor = (bgColor: string): string => {
-        try {
-            const color = chroma(bgColor);
-            return color.luminance() > 0.5 ? 'black' : 'white';
-        } catch {
-            return 'black';
-        }
-    };
-
     return (
         <FormFieldProvider
             control={control}
@@ -118,7 +108,7 @@ export const TemplateSearchTagsFilter = <TRole extends ENUM_POLICY_ROLE_TYPE>({
                                         variant='outline'
                                         style={{
                                             backgroundColor: tag.color,
-                                            color: getTextColor(tag.color ?? 'black'),
+                                            color: getLuminanceColor(tag.color ?? 'black'),
                                         }}
                                         className='flex items-center gap-1 h-9'
                                     >
