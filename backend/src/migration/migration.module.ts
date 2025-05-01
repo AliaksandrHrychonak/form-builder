@@ -12,6 +12,9 @@ import { EmailModule } from 'src/modules/email/email.module';
 import { RoleModule } from 'src/modules/role/role.module';
 import { SettingModule } from 'src/modules/setting/setting.module';
 import { UserModule } from 'src/modules/user/user.module';
+import { TemplateModule } from '../modules/template/template.module';
+import { ElasticsearchModule } from '../common/elasticsearch/elasticsearch.module';
+
 @Module({
     imports: [
         CommonModule,
@@ -23,6 +26,8 @@ import { UserModule } from 'src/modules/user/user.module';
         RoleModule,
         UserModule,
         SettingModule,
+        TemplateModule,
+        ElasticsearchModule,
     ],
     providers: [
         MigrationApiKeySeed,

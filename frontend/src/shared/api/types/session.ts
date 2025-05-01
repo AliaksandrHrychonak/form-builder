@@ -8,10 +8,3 @@ export interface ISession {
     accessToken: string;
     refreshToken: string;
 }
-
-export interface IAuthResponse extends ISession {
-    id: string;
-    email: string;
-}
-
-export enum CredentialsNames {}

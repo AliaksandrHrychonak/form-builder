@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Connection } from 'mongoose';
 import { DatabaseConnection } from 'src/common/database/decorators/database.decorator';
@@ -28,6 +28,7 @@ import {
     TEMPLATE_DEFAULT_PUBLIC_AVAILABLE_SEARCH,
     TEMPLATE_DEFAULT_PUBLIC_ORDER_BY,
 } from '../constants/template.list.constant';
+import { ElasticsearchFilterInPipe } from '../../../common/elasticsearch/pipes/elasticsearch.filter-in.pipe';
 
 @ApiTags('modules.public.template')
 @Controller({
@@ -51,10 +52,21 @@ export class TemplatePublicController {
             defaultOrderDirection: ENUM_ELASTICSEARCH_ORDER_DIRECTION_TYPE.DESC,
             availableOrderBy: TEMPLATE_DEFAULT_PUBLIC_AVAILABLE_ORDER_BY,
         })
-        { _elasticQuery, _limit, _offset, _order }: ElasticsearchListDto
+        { _elasticQuery, _limit, _offset, _order }: ElasticsearchListDto,
+        @Query(
+            'tags',
+            ElasticsearchFilterInPipe('tags', { fieldPath: 'tags._id' })
+        )
+        tagsFilter: Record<string, any>,
+        @Query('topics', ElasticsearchFilterInPipe('topics'))
+        topicsFilter: Record<string, any>
     ): Promise<IResponseElasticsearch<ITemplateSearchDoc>> {
         const filters = {
-            filter: [{ term: { isPublic: true } }],
+            filter: [
+                { term: { isPublic: true } },
+                ...(tagsFilter._elasticQuery?.filter || []),
+                ...(topicsFilter._elasticQuery?.filter || []),
+            ],
         };
 
         const { items, total, totalPage } =

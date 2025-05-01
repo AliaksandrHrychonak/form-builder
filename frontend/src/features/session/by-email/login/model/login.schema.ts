@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-import { emailScheme, passwordScheme } from '@shared/api';
+import { emailSchema as emailSchemaBase, passwordSchema as passwordSchemaBase } from '@shared/api';
 
 const emailSchema = z.object({
-    email: emailScheme,
+    email: emailSchemaBase,
 });
 
 const passwordSchema = z.object({
-    password: passwordScheme,
+    password: passwordSchemaBase,
 });
 
 // zod: Refine validations on object definitions don't get triggered until all fields in the object exist. https://github.com/colinhacks/zod/issues/479

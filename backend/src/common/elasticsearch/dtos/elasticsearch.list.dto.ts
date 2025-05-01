@@ -7,6 +7,8 @@ export class ElasticsearchListDto {
     _elasticQuery?: {
         must?: any[];
         filter?: any[];
+        should?: any[];
+        minimumShouldMatch?: number;
     };
 
     @ApiHideProperty()

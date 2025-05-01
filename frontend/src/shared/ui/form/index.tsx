@@ -4,11 +4,11 @@ import { Slot } from '@radix-ui/react-slot';
 import { useId } from 'react';
 import { FormProvider } from 'react-hook-form';
 
-import { useFormField, FormItemContext, cn } from '../../lib';
+import { cn, FormItemContext, useFormField } from '../../lib';
 import { Label } from '../label';
 
 import type * as LabelPrimitive from '@radix-ui/react-label';
-import type { JSX, ComponentProps } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 const Form = FormProvider;
 
@@ -17,7 +17,7 @@ const FormItem = ({ className, ...props }: ComponentProps<'fieldset'>): JSX.Elem
 
     return (
         <FormItemContext.Provider value={{ id }}>
-            <fieldset data-slot='item' className={cn('space-y-2', className)} {...props} />
+            <fieldset data-slot='item' className={cn(className)} {...props} />
         </FormItemContext.Provider>
     );
 };

@@ -50,7 +50,7 @@ export class TemplateCreateRequestDto {
     @IsOptional()
     @IsNotEmpty({ each: true })
     @IsEnum(ENUM_TEMPLATE_TOPIC, { each: true })
-    topic?: ENUM_TEMPLATE_TOPIC[];
+    topics?: ENUM_TEMPLATE_TOPIC[];
 
     @ApiProperty({
         example: true,
@@ -67,6 +67,14 @@ export class TemplateCreateRequestDto {
     @IsNotEmpty()
     @IsUUID('4', { each: true })
     sharedUsers: string[];
+
+    @ApiProperty({
+        example: [faker.string.uuid()],
+        required: true,
+    })
+    @IsNotEmpty()
+    @IsUUID('4', { each: true })
+    tags: string[];
 
     @ApiProperty({
         example: faker.string.uuid(),

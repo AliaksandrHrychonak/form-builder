@@ -9,7 +9,7 @@ import { z } from 'zod';
 //     // }
 // },
 
-export const passwordScheme = z
+export const passwordSchema = z
     .string()
     .min(4)
     .refine((value: string) => value.trim().length > 0);
