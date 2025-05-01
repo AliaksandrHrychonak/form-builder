@@ -63,7 +63,8 @@ export class TemplateService implements ITemplateService {
             isPublic,
             owner,
             sharedUsers,
-            topic,
+            topics,
+            tags,
         }: TemplateCreateRequestDto,
         options?: IDatabaseCreateOptions
     ): Promise<TemplateDoc> {
@@ -73,7 +74,8 @@ export class TemplateService implements ITemplateService {
         create.isPublic = isPublic;
         create.owner = owner;
         create.sharedUsers = sharedUsers;
-        create.topic = topic;
+        create.topics = topics;
+        create.tags = tags;
 
         return await this.templateRepository.create(create, options);
     }

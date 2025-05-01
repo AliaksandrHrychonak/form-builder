@@ -7,12 +7,16 @@ import {
     IDatabaseExistOptions,
     IDatabaseFindAllOptions,
     IDatabaseFindOneOptions,
+    IDatabaseGetTotalOptions,
     IDatabaseManyOptions,
 } from 'src/common/database/interfaces/database.interface';
 import {
     TemplateTagDoc,
     TemplateTagEntity,
 } from 'src/modules/template/repository/entities/template-tag.entity';
+import { plainToInstance } from 'class-transformer';
+import { TemplateTagListResponseDto } from '../dtos/response/template-tag.list.response.dto';
+import { ClientSession } from 'mongoose';
 
 @Injectable()
 export class TemplateTagService implements ITemplateTagService {
@@ -59,6 +63,21 @@ export class TemplateTagService implements ITemplateTagService {
         return this.templateTagRepository.exists(find, options);
     }
 
+    async existsByIds(
+        ids: string[],
+        options?: IDatabaseExistOptions<ClientSession>
+    ): Promise<boolean> {
+        if (ids && ids.length > 0) {
+            return this.templateTagRepository.exists(
+                {
+                    _id: { $in: ids },
+                },
+                options
+            );
+        }
+        return true;
+    }
+
     async selfDeleteBulk(
         find: Record<string, any>,
         options?: IDatabaseManyOptions
@@ -66,5 +85,21 @@ export class TemplateTagService implements ITemplateTagService {
         const data = { selfDeletion: true };
 
         return this.templateTagRepository.updateMany(find, data, options);
+    }
+
+    async getTotal(
+        find?: Record<string, any>,
+        options?: IDatabaseGetTotalOptions
+    ): Promise<number> {
+        return this.templateTagRepository.getTotal(find, options);
+    }
+
+    async mapList(
+        tag: TemplateTagDoc[]
+    ): Promise<TemplateTagListResponseDto[]> {
+        return plainToInstance(
+            TemplateTagListResponseDto,
+            tag.map(u => u.toObject())
+        );
     }
 }
