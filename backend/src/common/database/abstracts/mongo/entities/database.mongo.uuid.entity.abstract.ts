@@ -6,6 +6,7 @@ import {
     DATABASE_UPDATED_AT_FIELD_NAME,
 } from 'src/common/database/constants/database.constant';
 import { v4 as uuidV4 } from 'uuid';
+
 export abstract class DatabaseMongoUUIDEntityAbstract extends DatabaseEntityAbstract<string> {
     @Prop({
         type: String,
@@ -24,7 +25,7 @@ export abstract class DatabaseMongoUUIDEntityAbstract extends DatabaseEntityAbst
         required: false,
         index: 'asc',
         type: Date,
-        default: new Date(),
+        default: () => new Date(),
     })
     [DATABASE_CREATED_AT_FIELD_NAME]?: Date;
 
@@ -32,7 +33,7 @@ export abstract class DatabaseMongoUUIDEntityAbstract extends DatabaseEntityAbst
         required: false,
         index: 'asc',
         type: Date,
-        default: new Date(),
+        default: () => new Date(),
     })
     [DATABASE_UPDATED_AT_FIELD_NAME]?: Date;
 }
