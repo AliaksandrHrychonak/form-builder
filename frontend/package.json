@@ -11,7 +11,9 @@
         "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix --no-error-on-unmatched-pattern",
         "format": "prettier 'src/**/*.{js,jsx,ts,tsx}' --write",
         "stylelint": "stylelint \"src/**/*.{css}\" --custom-syntax --fix",
-        "fsd-cruise": "npx fsd-cruise src tsconfig.json",
+        "fsd:check": "npx steiger ./src",
+        "fsd:watch": "npx steiger ./src --watch",
+        "fsd:cruise": "npx fsd-cruise src tsconfig.json",
         "generate-favicons": "node generate-favicons.mjs"
     },
     "dependencies": {

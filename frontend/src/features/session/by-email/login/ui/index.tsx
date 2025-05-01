@@ -4,8 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { Config } from '@shared/config';
-import { FormFieldProvider } from '@shared/lib';
-import { useClientTranslation } from '@shared/lib/i18n/use-client-translation';
+import { FormFieldProvider, useClientTranslation } from '@shared/lib';
 import { Button, Form, FormControl, FormItem, FormLabel, FormMessage, Input, LinkClient } from '@shared/ui';
 
 import { createDefaultValuesLogin, LoginFormSchema, useLoginFormController } from '../model';
