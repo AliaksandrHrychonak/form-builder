@@ -31,6 +31,9 @@ export const Config = {
         SEARCH_DEFAULT_ORDER_BY: ['createdAt'],
         SEARCH_DEFAULT_PAGE_SIZE: 15,
     },
+    SUPPORT: {
+        DEFAULT_PRIORITY: ['High', 'Average', 'Low'],
+    },
 } as const;
 
 export type Config = typeof Config;
