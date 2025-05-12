@@ -15,7 +15,7 @@ export const SupportButton = (): JSX.Element => {
         <>
             <DialogWindow
                 trigger={
-                    <Button variant='ghost' className='fixed bottom-4 right-24 p-3'>
+                    <Button variant='outline' className='fixed bottom-4 right-4 p-3'>
                         <BadgeHelpIcon className='w-8 h-8' />
                     </Button>
                 }
