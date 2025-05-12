@@ -17,8 +17,8 @@ export class SupportPublicController {
     @ApiKeyPublicProtected()
     @Post('/create/ticket')
     async createTicket(@Body() createTicketDto: CreateSupportTicketDto) {
-        await this.supportTicketService.createTicket(createTicketDto);
+        // await this.supportTicketService.createTicket(createTicketDto);
 
-        return;
+        return createTicketDto;
     }
 }
