@@ -23,7 +23,7 @@ const eslintConfig = [
             'dist/**',
             'coverage/**',
             'public/**',
-            '*.config.js',
+            '*.configs.js',
             '.idea/**',
         ],
         files: ['**/*.{ts,tsx}'],

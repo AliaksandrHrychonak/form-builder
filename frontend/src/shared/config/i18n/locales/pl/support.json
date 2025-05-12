@@ -1,0 +1,27 @@
+{
+    "ticket": {
+        "success": "Zgłoszenie utworzone",
+        "createTitle": "Utwórz zgłoszenie wsparcia",
+        "createDescription": "Opisz swój problem, a my pomożemy Ci go rozwiązać"
+    },
+    "errors": {
+        "unknown": "Nieznany błąd wsparcia. Spróbuj ponownie później. Jeśli problem będzie się powtarzał, skontaktuj się z supportem poprzez email.",
+        "validation": "Błąd walidacji"
+    },
+    "fields": {
+        "description": "Opis problemu",
+        "priority": "Priorytet"
+    },
+    "placeholders": {
+        "description": "Opisz szczegółowo swój problem...",
+        "selectPriority": "Wybierz priorytet"
+    },
+    "priorities": {
+        "high": "Wysoki",
+        "average": "Średni",
+        "low": "Niski"
+    },
+    "buttons": {
+        "submitTicket": "Wyślij zgłoszenie"
+    }
+}

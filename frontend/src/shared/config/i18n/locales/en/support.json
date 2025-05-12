@@ -1,0 +1,27 @@
+{
+    "ticket": {
+        "success": "Ticket created",
+        "createTitle": "Create Support Ticket",
+        "createDescription": "Describe your issue and we'll help you resolve it"
+    },
+    "errors": {
+        "unknown": "Unknown support error. Please try again later. If the problem persists, contact support with email.",
+        "validation": "Validation Error"
+    },
+    "fields": {
+        "description": "Issue Description",
+        "priority": "Priority"
+    },
+    "placeholders": {
+        "description": "Describe your issue in detail...",
+        "selectPriority": "Select priority"
+    },
+    "priorities": {
+        "high": "High",
+        "average": "Medium",
+        "low": "Low"
+    },
+    "buttons": {
+        "submitTicket": "Submit Ticket"
+    }
+}

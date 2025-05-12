@@ -11,6 +11,7 @@ import MessageConfig from 'src/configs/message.config';
 import EmailConfig from 'src/configs/email.config';
 import TemplateConfig from 'src/configs/template.config';
 import ElasticsearchConfig from 'src/configs/elasticsearch.config';
+import AzureConfig from 'src/configs/azure.config';
 
 export default [
     AppConfig,
@@ -26,4 +27,5 @@ export default [
     EmailConfig,
     TemplateConfig,
     ElasticsearchConfig,
+    AzureConfig,
 ];

@@ -11,6 +11,8 @@ import { TemplateModule } from '../../modules/template/template.module';
 import { TemplatePublicController } from '../../modules/template/controllers/template.public.controller';
 import { PaginationModule } from '../../common/pagination/pagination.module';
 import { TemplateTagPublicController } from '../../modules/template/controllers/template-tag.public.controller';
+import { SupportPublicController } from '../../modules/support/controllers/support.public.controller';
+import { SupportModule } from '../../modules/support/support.module';
 
 @Module({
     controllers: [
@@ -19,6 +21,7 @@ import { TemplateTagPublicController } from '../../modules/template/controllers/
         UserPublicController,
         TemplatePublicController,
         TemplateTagPublicController,
+        SupportPublicController,
     ],
     providers: [],
     exports: [],
@@ -30,6 +33,7 @@ import { TemplateTagPublicController } from '../../modules/template/controllers/
         EmailModule,
         TemplateModule,
         PaginationModule,
+        SupportModule,
     ],
 })
 export class RoutesPublicModule {}
