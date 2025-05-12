@@ -4,6 +4,7 @@ import type metadata from '@shared/config/i18n/locales/en/metadata.json';
 import type search from '@shared/config/i18n/locales/en/search.json';
 import type signin from '@shared/config/i18n/locales/en/signin.json';
 import type signup from '@shared/config/i18n/locales/en/signup.json';
+import type support from '@shared/config/i18n/locales/en/support.json';
 import type template from '@shared/config/i18n/locales/en/template.json';
 import type templatetag from '@shared/config/i18n/locales/en/templatetag.json';
 import type theme from '@shared/config/i18n/locales/en/theme.json';
@@ -26,4 +27,5 @@ export interface Resources {
     template: typeof template;
     templatetag: typeof templatetag;
     search: typeof search;
+    support: typeof support;
 }
