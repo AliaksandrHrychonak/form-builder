@@ -27,7 +27,7 @@
         "@aws-sdk/client-sesv2": "^3.782.0",
         "@azure/identity": "^4.9.1",
         "@azure/msal-node": "^3.5.3",
-        "@casl/ability": "^6.7.1",
+        "@casl/ability": "^6.7.5",
         "@elastic/elasticsearch": "8.10.0",
         "@faker-js/faker": "^8.4.1",
         "@microsoft/microsoft-graph-client": "^3.0.7",
